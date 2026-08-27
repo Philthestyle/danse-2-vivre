@@ -3,6 +3,7 @@ import Link from "next/link";
 import { seedTeachers, seedFaq, seedGallery } from "@/lib/data/seed";
 import { TeacherCarousel } from "@/components/features/TeacherCarousel";
 import { FaqAccordion } from "@/components/features/FaqAccordion";
+import { withBasePath } from "@/lib/paths";
 
 export default function HomePage() {
   return (
@@ -11,7 +12,7 @@ export default function HomePage() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10">
           <Image
-            src="/images/hero.png"
+            src={withBasePath("/images/hero.png")}
             alt=""
             fill
             priority
@@ -52,7 +53,7 @@ export default function HomePage() {
         <div className="grid items-center gap-12 md:grid-cols-2">
           <div className="relative aspect-square overflow-hidden rounded-card shadow-stage md:aspect-[4/3]">
             <Image
-              src="/images/community.png"
+              src={withBasePath("/images/community.png")}
               alt="La communauté Danse 2 Vivre"
               fill
               className="object-cover"
@@ -121,7 +122,7 @@ export default function HomePage() {
               className="group relative aspect-[4/3] overflow-hidden rounded-card"
             >
               <Image
-                src={item.imageUrl}
+                src={withBasePath(item.imageUrl)}
                 alt={item.title}
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-105"

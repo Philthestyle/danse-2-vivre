@@ -24,13 +24,17 @@ trap 'restore' EXIT
 restore() {
   echo "→ Restauration des fichiers dynamiques"
   [ -d "$BACKUP_DIR/api" ] && mv "$BACKUP_DIR/api" src/app/api || true
+  [ -d "$BACKUP_DIR/admin" ] && mv "$BACKUP_DIR/admin" src/app/admin || true
   [ -f "$BACKUP_DIR/middleware.ts" ] && mv "$BACKUP_DIR/middleware.ts" src/middleware.ts || true
   rm -rf "$BACKUP_DIR"
 }
 
-# 1. Écarter API routes + middleware
+# 1. Écarter les fichiers qui reposent sur runtime Node (server actions, middleware, api)
 if [ -d "src/app/api" ]; then
   mv src/app/api "$BACKUP_DIR/api"
+fi
+if [ -d "src/app/admin" ]; then
+  mv src/app/admin "$BACKUP_DIR/admin"
 fi
 if [ -f "src/middleware.ts" ]; then
   mv src/middleware.ts "$BACKUP_DIR/middleware.ts"

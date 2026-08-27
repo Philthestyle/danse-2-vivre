@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { seedNews } from "@/lib/data/seed";
 import { formatDate } from "@/lib/utils";
+import { withBasePath } from "@/lib/paths";
 
 export const metadata: Metadata = {
   title: "Actualités",
@@ -31,7 +32,7 @@ export default function ActualitesPage() {
                 className="relative mb-4 block aspect-[16/10] overflow-hidden rounded-card"
               >
                 <Image
-                  src={n.imageUrl}
+                  src={withBasePath(n.imageUrl)}
                   alt={n.title}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-105"

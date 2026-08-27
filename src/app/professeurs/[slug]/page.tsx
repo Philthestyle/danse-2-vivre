@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { seedTeachers } from "@/lib/data/seed";
 import { formatDate } from "@/lib/utils";
+import { ContactTeacherButton } from "@/components/features/ContactTeacherButton";
 
 export function generateStaticParams() {
   return seedTeachers.map((t) => ({ slug: t.slug }));
@@ -64,14 +65,15 @@ export default async function TeacherProfilePage({
             </div>
           </dl>
 
-          <div className="mt-10 flex gap-3">
-            <Link href="/calendrier" className="btn-primary">
+          <div className="mt-10 flex flex-wrap gap-3">
+            <Link href="/calendrier" className="btn-outline">
               Voir ses cours
             </Link>
-            <Link href="/inscription" className="btn-outline">
-              Rejoindre l'association
-            </Link>
+            <ContactTeacherButton teacherSlug={t.slug} />
           </div>
+          <p className="mt-3 text-xs text-muted">
+            Un adhérent peut contacter un professeur en privé. Les échanges membre ↔ membre ne sont pas autorisés.
+          </p>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { seedNews } from "@/lib/data/seed";
 import { formatDate } from "@/lib/utils";
+import { withBasePath } from "@/lib/paths";
 
 export function generateStaticParams() {
   return seedNews.map((n) => ({ slug: n.slug }));
@@ -55,7 +56,7 @@ export default async function NewsDetailPage({
         <figure className="mx-auto mt-10 max-w-4xl">
           <div className="relative aspect-[16/9] overflow-hidden rounded-card">
             <Image
-              src={news.imageUrl}
+              src={withBasePath(news.imageUrl)}
               alt={news.title}
               fill
               className="object-cover"
