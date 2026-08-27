@@ -30,7 +30,8 @@ jobs:
         run: npm ci --no-audit --no-fund --legacy-peer-deps
 
       - name: Install Netlify CLI
-        run: npm install -g netlify-cli@latest
+        # Pinned : netlify-cli@latest publie une dep cassée @netlify/ai
+        run: npm install -g netlify-cli@22.4.1
 
       - name: Deploy preview to Netlify
         id: netlify
