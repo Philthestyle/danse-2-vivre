@@ -1,12 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { seedTeachers } from "@/lib/data/seed";
+import { getTeachers, getTeacherBySlug } from "@/lib/teachers";
 import { formatDate } from "@/lib/utils";
 import { ContactTeacherButton } from "@/components/features/ContactTeacherButton";
 
-export function generateStaticParams() {
-  return seedTeachers.map((t) => ({ slug: t.slug }));
+export async function generateStaticParams() {
+  const teachers = await getTeachers();
+  return teachers.map((t) => ({ slug: t.slug }));
 }
 
 export async function generateMetadata({
@@ -15,11 +17,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const t = seedTeachers.find((x) => x.slug === slug);
+  const t = await getTeacherBySlug(slug);
   if (!t) return {};
   return {
     title: `${t.firstName} — ${t.speciality}`,
-    description: t.bio,
+    description: t.bio || `Profil de ${t.firstName}, professeur de ${t.speciality}.`,
   };
 }
 
@@ -29,7 +31,7 @@ export default async function TeacherProfilePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const t = seedTeachers.find((x) => x.slug === slug);
+  const t = await getTeacherBySlug(slug);
   if (!t) notFound();
 
   return (
@@ -39,30 +41,43 @@ export default async function TeacherProfilePage({
       </Link>
 
       <div className="mt-8 grid gap-12 md:grid-cols-2">
-        <div className="relative aspect-square overflow-hidden rounded-card bg-gradient-to-br from-primary/30 via-accent/25 to-stage/15 shadow-stage md:aspect-[4/5]">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="font-display text-[14rem] leading-none text-primary/60">
-              {t.firstName.charAt(0)}
-            </span>
-          </div>
+        <div className="relative aspect-square overflow-hidden rounded-xl border border-border bg-gradient-to-br from-primary/30 via-accent/25 to-stage/15 md:aspect-[4/5]">
+          {t.photoUrl ? (
+            <Image
+              src={t.photoUrl}
+              alt={`${t.firstName} ${t.lastName}`.trim()}
+              fill
+              priority
+              className="object-cover"
+              sizes="(min-width: 768px) 50vw, 100vw"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="font-display text-[14rem] leading-none text-primary/60">
+                {t.firstName.charAt(0)}
+              </span>
+            </div>
+          )}
         </div>
 
         <div>
           <p className="text-sm font-semibold uppercase tracking-widest text-primary">
             {t.speciality}
           </p>
-          <h1 className="mt-2 text-6xl sm:text-7xl">{t.firstName}</h1>
-          <p className="mt-6 text-lg leading-relaxed text-muted">{t.bio}</p>
+          <h1 className="mt-2 font-display text-6xl text-fg sm:text-7xl">
+            {t.firstName}
+          </h1>
+          {t.bio && (
+            <p className="mt-6 text-lg leading-relaxed text-muted">{t.bio}</p>
+          )}
 
           <dl className="mt-10 space-y-4 border-t border-border pt-8">
-            <div className="flex justify-between gap-4">
-              <dt className="text-sm text-muted">Villes d'intervention</dt>
-              <dd className="text-right font-medium">{t.cities.join(", ")}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-sm text-muted">À Danse 2 Vivre depuis</dt>
-              <dd className="text-right font-medium">{formatDate(t.startedAt)}</dd>
-            </div>
+            {t.startedAt && (
+              <div className="flex justify-between gap-4">
+                <dt className="text-sm text-muted">À Danse 2 Vivre depuis</dt>
+                <dd className="text-right font-medium">{formatDate(t.startedAt)}</dd>
+              </div>
+            )}
           </dl>
 
           <div className="mt-10 flex flex-wrap gap-3">

@@ -1,10 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { seedTeachers, seedFaq, seedGallery } from "@/lib/data/seed";
+import { seedFaq, seedGallery } from "@/lib/data/seed";
 import { FaqAccordion } from "@/components/features/FaqAccordion";
 import { withBasePath } from "@/lib/paths";
+import { getTeachers } from "@/lib/teachers";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const teachers = await getTeachers();
+
   return (
     <>
       {/* 1. Hero — "Ton Style. Ton Flow. Ton Énergie." (Figma Slide 16:9 #1) */}
@@ -44,7 +47,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. Qui sommes-nous ? — Figma slide 1, section 2 */}
+      {/* 2. Qui sommes-nous ? */}
       <section className="border-b border-border py-20 md:py-28">
         <div className="container-page grid items-center gap-12 md:grid-cols-2">
           <div>
@@ -63,7 +66,7 @@ export default function HomePage() {
                 <p className="text-xs uppercase tracking-widest text-muted">élèves</p>
               </div>
               <div>
-                <p className="font-display text-4xl text-primary">5</p>
+                <p className="font-display text-4xl text-primary">{teachers.length}</p>
                 <p className="text-xs uppercase tracking-widest text-muted">professeurs</p>
               </div>
               <div>
@@ -84,7 +87,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. Nos professeurs — grid 4 colonnes avec vraies cartes (Figma slide 11) */}
+      {/* 3. Nos professeurs — data live Supabase */}
       <section className="border-b border-border py-20 md:py-28">
         <div className="container-page">
           <div className="mb-12 text-center">
@@ -93,34 +96,54 @@ export default function HomePage() {
             </p>
             <p className="mt-3 text-muted">Cinq personnalités, cinq disciplines.</p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-            {seedTeachers.map((t) => (
-              <Link
-                key={t.slug}
-                href={`/professeurs/${t.slug}`}
-                className="group overflow-hidden rounded-xl border border-border bg-surface transition-all hover:border-primary/60 hover:-translate-y-1"
-              >
-                <div className="relative aspect-[4/5] w-full bg-gradient-to-b from-elevated to-surface">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="font-display text-8xl text-primary/70">
-                      {t.firstName.charAt(0)}
-                    </span>
+          {teachers.length === 0 ? (
+            <div className="card p-10 text-center text-muted">
+              Les profils des professeurs seront ajoutés depuis l'administration.
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              {teachers.map((t) => (
+                <Link
+                  key={t.slug}
+                  href={`/professeurs/${t.slug}`}
+                  className="group overflow-hidden rounded-xl border border-border bg-surface transition-all hover:border-primary/60 hover:-translate-y-1"
+                >
+                  <div className="relative aspect-[4/5] w-full bg-gradient-to-b from-elevated to-surface">
+                    {t.photoUrl ? (
+                      <Image
+                        src={t.photoUrl}
+                        alt={`${t.firstName} ${t.lastName}`.trim()}
+                        fill
+                        className="object-cover"
+                        sizes="(min-width: 1280px) 20vw, (min-width: 640px) 33vw, 50vw"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="font-display text-8xl text-primary/70">
+                          {t.firstName.charAt(0)}
+                        </span>
+                      </div>
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+                      <p className="font-display text-2xl text-white">{t.firstName}</p>
+                    </div>
                   </div>
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                    <p className="font-display text-2xl text-white">{t.firstName}</p>
+                  <div className="p-4">
+                    <p className="text-sm text-primary">{t.speciality}</p>
+                    {t.startedAt && (
+                      <p className="mt-1 text-xs text-muted">
+                        Commence {new Date(t.startedAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}
+                      </p>
+                    )}
                   </div>
-                </div>
-                <div className="p-4">
-                  <p className="text-sm text-primary">{t.speciality}</p>
-                  <p className="mt-1 text-xs text-muted">Commence {new Date(t.startedAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* 4. Galerie photo — mosaïque (Figma slide 1, section galerie) */}
+      {/* 4. Galerie photo */}
       <section className="border-b border-border py-20 md:py-28">
         <div className="container-page">
           <div className="mb-12">
@@ -147,7 +170,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. Questions fréquentes — accordion (Figma slide 1) */}
+      {/* 5. Questions fréquentes */}
       <section id="faq" className="border-b border-border py-20 md:py-28">
         <div className="container-page mx-auto max-w-3xl">
           <div className="mb-10">
@@ -159,7 +182,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. Nous contacter — Figma slide 1, footer */}
+      {/* 6. Nous contacter */}
       <section className="py-20 md:py-24">
         <div className="container-page mx-auto max-w-3xl text-center">
           <p className="font-display text-4xl text-primary sm:text-5xl">
