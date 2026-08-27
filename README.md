@@ -15,7 +15,7 @@
 
 - **Node.js ≥ 20** (LTS)
 - **npm ≥ 10** (ou pnpm)
-- Un projet **Supabase existant** (le seul autorisé — cf. brief §2 : `fkutafmumvzzeyeeakxt`)
+- Un projet **Supabase existant** (le seul autorisé — cf. brief §2 : `hgndfwjsyukamkcvubsf`)
 - Un bucket **AWS S3 existant** (le seul autorisé : `danse-2-vivre` région `eu-west-3`)
 
 ## 2. Installation
@@ -42,8 +42,8 @@ Les migrations sont dans `supabase/migrations/` :
 Appliquer (avec le CLI Supabase) :
 
 ```bash
-# À la racine du projet (Supabase CLI liée au projet fkutafmumvzzeyeeakxt)
-supabase link --project-ref fkutafmumvzzeyeeakxt
+# À la racine du projet (Supabase CLI liée au projet hgndfwjsyukamkcvubsf)
+supabase link --project-ref hgndfwjsyukamkcvubsf
 supabase db push
 # seed dev (villes, FAQ)
 psql "$SUPABASE_DB_URL" -f supabase/seed.sql

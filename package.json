@@ -15,7 +15,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,css,json}\"",
     "test": "vitest run",
     "test:watch": "vitest",
-    "db:types": "supabase gen types typescript --project-id fkutafmumvzzeyeeakxt > src/lib/types/database.types.ts",
+    "db:types": "supabase gen types typescript --project-id hgndfwjsyukamkcvubsf > src/lib/types/database.types.ts",
     "db:migrate": "supabase db push",
     "db:reset": "supabase db reset"
   },
