@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =============================================================================
+   Design tokens — Danse 2 Vivre
+   Palette inspirée des photos : scène chaude (Photo1) + communauté (Photo2).
+   Corail chaleureux (primary) · bleu nuit scène (stage) · crème doux (bg).
+   ============================================================================= */
+
+@layer base {
+  :root {
+    /* Light mode */
+    --color-bg: 253 249 244;         /* crème doux */
+    --color-surface: 255 255 255;
+    --color-elevated: 250 245 238;
+    --color-border: 232 220 205;
+    --color-fg: 30 20 30;
+    --color-muted: 110 95 100;
+
+    --color-primary: 220 88 66;      /* corail scène */
+    --color-primary-fg: 255 255 255;
+
+    --color-accent: 236 168 87;      /* ambre projecteur */
+    --color-accent-fg: 30 20 30;
+
+    --color-stage: 22 28 60;         /* bleu nuit scène */
+    --color-danger: 200 60 60;
+    --color-success: 60 150 100;
+
+    --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-caramel-vanilla: "Great Vibes", "Caramel and Vanilla", cursive;
+  }
+
+  .dark {
+    --color-bg: 18 16 24;
+    --color-surface: 26 22 34;
+    --color-elevated: 34 28 44;
+    --color-border: 56 46 68;
+    --color-fg: 245 240 232;
+    --color-muted: 168 158 172;
+
+    --color-primary: 236 108 90;
+    --color-primary-fg: 20 14 20;
+
+    --color-accent: 244 190 120;
+    --color-accent-fg: 20 14 20;
+
+    --color-stage: 8 12 30;
+    --color-danger: 230 100 100;
+    --color-success: 90 190 140;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-bg text-fg font-sans;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+    font-weight: 400;
+  }
+
+  ::selection {
+    @apply bg-primary text-primary-fg;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-bg;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-pill px-6 py-3
+           font-medium transition-all duration-200
+           disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary text-primary-fg hover:opacity-90 active:scale-[.98];
+  }
+
+  .btn-outline {
+    @apply btn border-2 border-fg/20 text-fg hover:border-primary hover:text-primary;
+  }
+
+  .btn-ghost {
+    @apply btn text-fg hover:bg-elevated;
+  }
+
+  .card {
+    @apply rounded-card bg-surface border border-border shadow-card;
+  }
+
+  .field {
+    @apply w-full rounded-xl border border-border bg-surface px-4 py-3
+           text-fg placeholder:text-muted transition-colors
+           focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30
+           disabled:opacity-60;
+  }
+
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-fg;
+  }
+
+  .link {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}

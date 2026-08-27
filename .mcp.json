@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "shikki-db": {
+      "command": "/Users/fj-studios/.local/bin/shikki-mcp",
+      "args": [],
+      "env": {
+        "SHIKKI_PROJECT": "WEB-allan-titin-danse-2-vivre",
+        "SHIKKI_INSTANCE_ID": "default"
+      }
+    },
+    "shi": {
+      "command": "/Users/fj-studios/.local/bin/shi",
+      "args": ["mcp-serve"]
+    }
+  }
+}
