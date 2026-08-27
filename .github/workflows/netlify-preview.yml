@@ -29,35 +29,47 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund --legacy-peer-deps
 
-      - name: Build Next.js
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli@latest
+
+      - name: Deploy preview to Netlify
+        id: netlify
         env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           NEXT_PUBLIC_SITE_URL: https://danse-2-vivre-263.netlify.app
-        run: npm run build
-
-      - name: Deploy to Netlify (preview)
-        id: netlify
-        uses: nwtgck/actions-netlify@v3.0
-        with:
-          publish-dir: '.next'
-          production-branch: main
-          production-deploy: false
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Preview ${{ github.ref_name }} · ${{ github.event.head_commit.message }}"
-          enable-pull-request-comment: true
-          enable-commit-comment: true
-          overwrites-pull-request-comment: true
-          alias: ${{ github.ref_name }}
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        timeout-minutes: 5
-
-      - name: Print preview URL
         run: |
-          echo "Preview URL: ${{ steps.netlify.outputs.deploy-url }}"
+          BRANCH_SLUG="${GITHUB_REF_NAME//\//-}"
+          BRANCH_SLUG="${BRANCH_SLUG:0:37}"
+          echo "Branch alias: $BRANCH_SLUG"
+
+          OUTPUT=$(netlify deploy \
+            --build \
+            --alias "$BRANCH_SLUG" \
+            --message "Preview $GITHUB_REF_NAME · $GITHUB_SHA" \
+            --site "$NETLIFY_SITE_ID" \
+            --auth "$NETLIFY_AUTH_TOKEN")
+
+          echo "$OUTPUT"
+          PREVIEW_URL=$(echo "$OUTPUT" | grep -Eo 'https://[a-z0-9-]+\.netlify\.app' | tail -1)
+          echo "preview-url=$PREVIEW_URL" >> $GITHUB_OUTPUT
+
           echo "## 🚀 Preview déployé" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**URL**: ${{ steps.netlify.outputs.deploy-url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch**: \`$GITHUB_REF_NAME\`" >> $GITHUB_STEP_SUMMARY
+          echo "**URL**: [$PREVIEW_URL]($PREVIEW_URL)" >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment PR (si PR existe)
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: netlify-preview
+          message: |
+            ### 🚀 Netlify preview
+
+            **URL**: ${{ steps.netlify.outputs.preview-url }}
+
+            Rebuild à chaque push sur cette branche.
