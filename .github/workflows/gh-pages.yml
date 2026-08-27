@@ -33,6 +33,10 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: /danse-2-vivre
           NEXT_PUBLIC_SITE_URL: https://philthestyle.github.io/danse-2-vivre
+          # Clés PUBLIQUES Supabase (anon key = safe côté client, RLS protège).
+          # Voir docs Supabase : https://supabase.com/docs/guides/api#api-keys
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
         run: npm run build:static
 
       - name: Setup Pages

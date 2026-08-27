@@ -25,8 +25,14 @@ export function SigninForm() {
       setError(parsed.error.issues[0]?.message ?? "Formulaire invalide");
       return;
     }
-    setLoading(true);
     const supabase = createClient();
+    if (!supabase) {
+      setError(
+        "Backend non configuré dans cette preview. La connexion réelle est disponible en local ou en production."
+      );
+      return;
+    }
+    setLoading(true);
     const { error: authErr } = await supabase.auth.signInWithPassword(parsed.data);
     setLoading(false);
     if (authErr) {

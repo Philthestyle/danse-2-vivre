@@ -19,6 +19,11 @@ export function ForgotForm() {
       return;
     }
     const supabase = createClient();
+    if (!supabase) {
+      setState("error");
+      setMessage("Backend non configuré dans cette preview.");
+      return;
+    }
     const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
       redirectTo: `${window.location.origin}/reinitialiser-mot-de-passe`,
     });

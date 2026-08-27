@@ -20,6 +20,7 @@ export function SignupForm() {
 
   useEffect(() => {
     const supabase = createClient();
+    if (!supabase) return;
     supabase
       .from("cities")
       .select("id, name")
@@ -49,8 +50,14 @@ export function SignupForm() {
       return;
     }
 
-    setLoading(true);
     const supabase = createClient();
+    if (!supabase) {
+      setError(
+        "Backend non configuré dans cette preview. L'inscription réelle est disponible en local ou en production."
+      );
+      return;
+    }
+    setLoading(true);
     const { data, error: authErr } = await supabase.auth.signUp({
       email: input.email,
       password: input.password,

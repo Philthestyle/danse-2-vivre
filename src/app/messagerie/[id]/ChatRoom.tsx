@@ -29,6 +29,7 @@ export function ChatRoom({
 
   useEffect(() => {
     const supabase = createClient();
+    if (!supabase) return;
     const channel = supabase
       .channel(`conv:${conversationId}`)
       .on(
@@ -67,6 +68,11 @@ export function ChatRoom({
     }
     setPending(true);
     const supabase = createClient();
+    if (!supabase) {
+      setPending(false);
+      setError("Backend non configuré.");
+      return;
+    }
     const { error: err } = await supabase.from("messages").insert({
       conversation_id: conversationId,
       author_id: currentUserId,

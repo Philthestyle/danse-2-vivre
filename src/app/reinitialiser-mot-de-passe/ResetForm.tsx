@@ -24,6 +24,11 @@ export function ResetForm() {
     }
     setState("loading");
     const supabase = createClient();
+    if (!supabase) {
+      setState("error");
+      setMessage("Backend non configuré dans cette preview.");
+      return;
+    }
     const { error } = await supabase.auth.updateUser({
       password: parsed.data.password,
     });
