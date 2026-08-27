@@ -3,52 +3,53 @@
 @tailwind utilities;
 
 /* =============================================================================
-   Design tokens — Danse 2 Vivre
-   Palette extraite du fichier Figma (via API, personal access token).
-   Dark-first : le fichier Figma est intégralement sombre. Light = alt.
+   Danse 2 Vivre — Design tokens
+   Extraits du fichier Figma via API REST (personal token).
+   Palette et typos EXACTES depuis Danse-2-Vivre-Figma/tokens.json.
    ============================================================================= */
 
 @layer base {
   :root {
-    /* DARK — mode par défaut, conforme Figma */
-    --color-bg: 10 10 15;              /* #0A0A0F fond scène */
-    --color-surface: 20 20 28;         /* #14141C cartes */
-    --color-elevated: 28 28 38;        /* #1C1C26 hover / secondaire */
-    --color-border: 48 48 62;          /* #30303E séparateurs */
-    --color-fg: 246 246 248;           /* #F6F6F8 texte principal */
-    --color-muted: 156 156 168;        /* #9C9CA8 texte secondaire */
+    /* Palette Figma exacte */
+    --color-bg: 15 15 15;              /* #0f0f0f fond de scène */
+    --color-surface: 24 24 24;         /* #181818 cartes */
+    --color-elevated: 56 56 56;        /* #383838 hover */
+    --color-border: 106 108 111;       /* #6a6c6f border stroke */
+    --color-fg: 255 255 255;           /* #ffffff texte principal */
+    --color-muted: 189 189 189;        /* #bdbdbd texte secondaire */
 
-    --color-primary: 232 66 92;        /* #E8425C rose/rouge accent Figma */
+    --color-primary: 219 22 47;        /* #db162f rouge signature */
     --color-primary-fg: 255 255 255;
 
-    --color-accent: 244 146 71;        /* #F49247 orange complémentaire */
-    --color-accent-fg: 20 14 20;
+    --color-accent: 247 223 185;       /* #f7dfb9 crème/beige */
+    --color-accent-fg: 15 15 15;
 
-    --color-stage: 8 8 14;             /* nuit profonde */
-    --color-danger: 232 66 92;
-    --color-success: 100 200 140;
+    --color-success: 50 213 125;       /* #32d57d vert stages */
+    --color-danger: 219 22 47;         /* même rouge */
+    --color-stage: 15 15 15;
 
-    --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-caramel-vanilla: "Great Vibes", "Caramel and Vanilla", cursive;
+    /* Fonts (celles utilisées dans Figma) */
+    --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+    --font-script: "Caramel and Vanilla", "Great Vibes", cursive;
+    --font-blaka: "Blaka", "UnifrakturCook", serif;
+    --font-cabin: "Cabin", "Inter", sans-serif;
+    --font-bebas: "Bebas Neue", "Inter", sans-serif;
 
     color-scheme: dark;
   }
 
+  /* Thème clair (opt-in — le brief demande light+dark) */
   .light {
-    /* Alternative claire (mode utilisateur — brief §7 : thème clair/sombre) */
     --color-bg: 253 249 244;
     --color-surface: 255 255 255;
-    --color-elevated: 250 245 238;
-    --color-border: 232 220 205;
-    --color-fg: 30 20 30;
-    --color-muted: 110 95 100;
-    --color-primary: 220 88 66;
+    --color-elevated: 246 246 246;
+    --color-border: 189 189 189;
+    --color-fg: 15 15 15;
+    --color-muted: 106 108 111;
+    --color-primary: 219 22 47;
     --color-primary-fg: 255 255 255;
-    --color-accent: 236 168 87;
-    --color-accent-fg: 30 20 30;
-    --color-stage: 22 28 60;
-    --color-danger: 200 60 60;
-    --color-success: 60 150 100;
+    --color-accent: 247 223 185;
+    --color-accent-fg: 15 15 15;
     color-scheme: light;
   }
 
@@ -60,12 +61,12 @@
 
   body {
     @apply bg-bg text-fg font-sans;
-    font-feature-settings: "ss01", "cv11";
   }
 
   h1, h2, h3, h4 {
-    @apply font-display tracking-tight;
+    @apply font-script;
     font-weight: 400;
+    letter-spacing: 0.02em;
   }
 
   ::selection {
@@ -79,66 +80,77 @@
 
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-[1360px] px-6 sm:px-10 lg:px-20;
   }
 
-  /* Boutons — Figma : contours gradient rose/orange sur fond sombre */
+  /* Boutons — Figma : contour subtil, coins arrondis modérés */
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-md px-6 py-3
-           text-sm font-medium transition-all duration-200
+           text-sm font-semibold transition-all duration-200
            disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-primary {
-    @apply btn relative bg-surface text-fg
-           border border-primary/70
-           shadow-[0_8px_24px_-12px_rgb(var(--color-primary)/0.6)]
-           hover:border-primary hover:shadow-[0_12px_28px_-10px_rgb(var(--color-primary)/0.8)]
-           hover:-translate-y-[1px];
+    @apply btn bg-transparent text-fg border border-primary
+           shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_20px_rgba(219,22,47,0.15)]
+           hover:shadow-[0_0_0_2px_rgba(219,22,47,0.8),inset_0_0_24px_rgba(219,22,47,0.25)];
   }
 
   .btn-outline {
-    @apply btn border border-border text-fg hover:border-primary hover:text-primary;
+    @apply btn bg-transparent text-fg border border-border
+           hover:border-fg hover:bg-fg/5;
   }
 
   .btn-ghost {
     @apply btn text-fg hover:bg-elevated;
   }
 
+  /* Cartes Figma */
   .card {
     @apply rounded-xl bg-surface border border-border;
   }
 
+  .card-dashed {
+    @apply rounded-xl border border-dashed border-border bg-transparent;
+  }
+
+  /* Champs formulaire Figma */
   .field {
     @apply w-full rounded-md border border-border bg-surface px-4 py-3
            text-fg placeholder:text-muted transition-colors
-           focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30
+           focus:border-fg focus:outline-none focus:ring-1 focus:ring-fg/40
            disabled:opacity-60;
   }
 
   .label {
-    @apply mb-1.5 block text-sm font-medium text-fg;
+    @apply mb-2 block text-sm font-semibold text-fg;
   }
 
   .link {
     @apply text-primary underline-offset-4 hover:underline;
   }
 
-  /* Utilitaire : titres scripts hérités de Figma */
+  /* Typo Figma : gros titres scripts */
   .display-hero {
-    @apply font-display text-6xl leading-[0.95] sm:text-7xl md:text-8xl lg:text-[9rem];
+    font-family: var(--font-blaka), var(--font-script);
+    @apply text-6xl leading-[1] sm:text-7xl md:text-8xl lg:text-[80px];
+    letter-spacing: 0.025em;
+  }
+
+  .display-script {
+    font-family: var(--font-script);
+    @apply text-5xl leading-[1] sm:text-6xl;
+    letter-spacing: 0.04em;
+  }
+
+  /* Section header Figma : Inter 700 36px UPPERCASE */
+  .section-title-caps {
+    @apply font-sans font-bold text-3xl sm:text-4xl uppercase tracking-wider;
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+  .text-balance { text-wrap: balance; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
