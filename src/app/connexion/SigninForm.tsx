@@ -39,7 +39,7 @@ export function SigninForm() {
       setError("Email ou mot de passe incorrect.");
       return;
     }
-    router.push(next);
+    router.push(next as never);
     router.refresh();
   }
 

@@ -28,13 +28,11 @@ const nextConfig: NextConfig = {
       ],
     },
   }),
-  experimental: {
-    typedRoutes: !isStaticExport,
-  },
+  typedRoutes: !isStaticExport,
   eslint: {
     // Le build de preview ne doit pas casser sur des lints — le vrai gate est le CI
     ignoreDuringBuilds: isStaticExport,
   },
-};
+} as NextConfig;
 
 export default nextConfig;
