@@ -13,14 +13,13 @@ export default function SignupPage() {
   return (
     <div className="container-page py-12">
       <div className="mx-auto w-full max-w-2xl">
-        <div className="mb-8 text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-primary">
-            Rejoindre l'aventure
-          </p>
-          <h1 className="mt-2 text-4xl sm:text-5xl">Créer mon compte</h1>
-          <p className="mt-3 text-muted">
-            Aucun paiement à l'inscription. Vous choisirez votre forfait et pourrez
-            l'ajuster avec votre professeur ou l'administration.
+        <div className="mb-10">
+          <h1 className="font-display text-6xl text-primary sm:text-7xl">Inscription</h1>
+          <p className="mt-4 text-muted">
+            Chez nous l'entraide, le respect et la progression collective sont au cœur
+            de notre fonctionnement. Intégrez une équipe soudée, portée par des valeurs
+            humaines fortes et animée par des professionnels polyvalents, reconnus pour
+            leur expertise et leur bienveillance.
           </p>
         </div>
 

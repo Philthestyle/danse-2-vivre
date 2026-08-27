@@ -17,10 +17,11 @@ const STORAGE_KEY = "d2v-theme";
 
 function resolveTheme(theme: Theme): Resolved {
   if (theme === "system") {
-    return typeof window !== "undefined" &&
-      window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light";
+    // Dark par défaut (conforme Figma). L'utilisateur peut basculer.
+    if (typeof window === "undefined") return "dark";
+    return window.matchMedia("(prefers-color-scheme: light)").matches
+      ? "light"
+      : "dark";
   }
   return theme;
 }
@@ -37,16 +38,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const next = resolveTheme(theme);
     setResolved(next);
+    // Le CSS est dark-first : on toggle .light quand nécessaire (au lieu de .dark)
+    document.documentElement.classList.toggle("light", next === "light");
     document.documentElement.classList.toggle("dark", next === "dark");
     document.documentElement.style.colorScheme = next;
   }, [theme]);
 
   useEffect(() => {
     if (theme !== "system") return;
-    const mq = window.matchMedia("(prefers-color-scheme: dark)");
+    const mq = window.matchMedia("(prefers-color-scheme: light)");
     const handler = () => {
-      const next = mq.matches ? "dark" : "light";
+      const next = mq.matches ? "light" : "dark";
       setResolved(next);
+      document.documentElement.classList.toggle("light", next === "light");
       document.documentElement.classList.toggle("dark", next === "dark");
     };
     mq.addEventListener("change", handler);

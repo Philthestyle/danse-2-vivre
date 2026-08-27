@@ -13,11 +13,9 @@ export default function SigninPage() {
   return (
     <div className="container-page grid min-h-[80vh] items-center py-12">
       <div className="mx-auto w-full max-w-md">
-        <div className="mb-8 text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-primary">
-            Espace membre
-          </p>
-          <h1 className="mt-2 text-4xl">Bon retour parmi nous</h1>
+        <div className="mb-10">
+          <h1 className="font-display text-5xl text-primary sm:text-6xl">Connexion</h1>
+          <p className="mt-3 text-muted">Accédez à votre espace Danse 2 Vivre.</p>
         </div>
 
         <div className="card p-6 sm:p-8">

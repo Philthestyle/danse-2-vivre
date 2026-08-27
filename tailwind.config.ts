@@ -1,7 +1,8 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  darkMode: "class",
+  // Dark-first : .light toggle la palette claire (opposite of usual .dark)
+  darkMode: ["class", ".dark"],
   content: ["./src/**/*.{ts,tsx,mdx}"],
   theme: {
     extend: {

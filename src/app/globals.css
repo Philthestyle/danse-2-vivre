@@ -4,51 +4,52 @@
 
 /* =============================================================================
    Design tokens — Danse 2 Vivre
-   Palette inspirée des photos : scène chaude (Photo1) + communauté (Photo2).
-   Corail chaleureux (primary) · bleu nuit scène (stage) · crème doux (bg).
+   Palette extraite du fichier Figma (via API, personal access token).
+   Dark-first : le fichier Figma est intégralement sombre. Light = alt.
    ============================================================================= */
 
 @layer base {
   :root {
-    /* Light mode */
-    --color-bg: 253 249 244;         /* crème doux */
+    /* DARK — mode par défaut, conforme Figma */
+    --color-bg: 10 10 15;              /* #0A0A0F fond scène */
+    --color-surface: 20 20 28;         /* #14141C cartes */
+    --color-elevated: 28 28 38;        /* #1C1C26 hover / secondaire */
+    --color-border: 48 48 62;          /* #30303E séparateurs */
+    --color-fg: 246 246 248;           /* #F6F6F8 texte principal */
+    --color-muted: 156 156 168;        /* #9C9CA8 texte secondaire */
+
+    --color-primary: 232 66 92;        /* #E8425C rose/rouge accent Figma */
+    --color-primary-fg: 255 255 255;
+
+    --color-accent: 244 146 71;        /* #F49247 orange complémentaire */
+    --color-accent-fg: 20 14 20;
+
+    --color-stage: 8 8 14;             /* nuit profonde */
+    --color-danger: 232 66 92;
+    --color-success: 100 200 140;
+
+    --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-caramel-vanilla: "Great Vibes", "Caramel and Vanilla", cursive;
+
+    color-scheme: dark;
+  }
+
+  .light {
+    /* Alternative claire (mode utilisateur — brief §7 : thème clair/sombre) */
+    --color-bg: 253 249 244;
     --color-surface: 255 255 255;
     --color-elevated: 250 245 238;
     --color-border: 232 220 205;
     --color-fg: 30 20 30;
     --color-muted: 110 95 100;
-
-    --color-primary: 220 88 66;      /* corail scène */
+    --color-primary: 220 88 66;
     --color-primary-fg: 255 255 255;
-
-    --color-accent: 236 168 87;      /* ambre projecteur */
+    --color-accent: 236 168 87;
     --color-accent-fg: 30 20 30;
-
-    --color-stage: 22 28 60;         /* bleu nuit scène */
+    --color-stage: 22 28 60;
     --color-danger: 200 60 60;
     --color-success: 60 150 100;
-
-    --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
-    --font-caramel-vanilla: "Great Vibes", "Caramel and Vanilla", cursive;
-  }
-
-  .dark {
-    --color-bg: 18 16 24;
-    --color-surface: 26 22 34;
-    --color-elevated: 34 28 44;
-    --color-border: 56 46 68;
-    --color-fg: 245 240 232;
-    --color-muted: 168 158 172;
-
-    --color-primary: 236 108 90;
-    --color-primary-fg: 20 14 20;
-
-    --color-accent: 244 190 120;
-    --color-accent-fg: 20 14 20;
-
-    --color-stage: 8 12 30;
-    --color-danger: 230 100 100;
-    --color-success: 90 190 140;
+    color-scheme: light;
   }
 
   html {
@@ -81,18 +82,23 @@
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 
+  /* Boutons — Figma : contours gradient rose/orange sur fond sombre */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-pill px-6 py-3
-           font-medium transition-all duration-200
+    @apply inline-flex items-center justify-center gap-2 rounded-md px-6 py-3
+           text-sm font-medium transition-all duration-200
            disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-primary {
-    @apply btn bg-primary text-primary-fg hover:opacity-90 active:scale-[.98];
+    @apply btn relative bg-surface text-fg
+           border border-primary/70
+           shadow-[0_8px_24px_-12px_rgb(var(--color-primary)/0.6)]
+           hover:border-primary hover:shadow-[0_12px_28px_-10px_rgb(var(--color-primary)/0.8)]
+           hover:-translate-y-[1px];
   }
 
   .btn-outline {
-    @apply btn border-2 border-fg/20 text-fg hover:border-primary hover:text-primary;
+    @apply btn border border-border text-fg hover:border-primary hover:text-primary;
   }
 
   .btn-ghost {
@@ -100,11 +106,11 @@
   }
 
   .card {
-    @apply rounded-card bg-surface border border-border shadow-card;
+    @apply rounded-xl bg-surface border border-border;
   }
 
   .field {
-    @apply w-full rounded-xl border border-border bg-surface px-4 py-3
+    @apply w-full rounded-md border border-border bg-surface px-4 py-3
            text-fg placeholder:text-muted transition-colors
            focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30
            disabled:opacity-60;
@@ -117,13 +123,17 @@
   .link {
     @apply text-primary underline-offset-4 hover:underline;
   }
+
+  /* Utilitaire : titres scripts hérités de Figma */
+  .display-hero {
+    @apply font-display text-6xl leading-[0.95] sm:text-7xl md:text-8xl lg:text-[9rem];
+  }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
-
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }

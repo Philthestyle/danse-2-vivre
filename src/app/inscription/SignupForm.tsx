@@ -77,7 +77,7 @@ export function SignupForm() {
   if (success) {
     return (
       <div role="status" className="text-center">
-        <p className="font-display text-3xl text-primary">Bienvenue !</p>
+        <p className="font-display text-4xl text-primary">Bienvenue !</p>
         <p className="mt-2 text-muted">
           Un email de confirmation vous a été envoyé. Redirection en cours…
         </p>
@@ -86,26 +86,39 @@ export function SignupForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5" noValidate>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="firstName" className="label">Prénom</label>
-          <input id="firstName" name="firstName" required className="field" />
+    <form onSubmit={onSubmit} className="space-y-6" noValidate>
+      {/* Nom + prénom */}
+      <fieldset>
+        <legend className="label">Nom et prénom de l'adhérent</legend>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <input
+            name="firstName"
+            required
+            className="field"
+            placeholder="Prénom"
+            aria-label="Prénom"
+          />
+          <input
+            name="lastName"
+            required
+            className="field"
+            placeholder="Nom"
+            aria-label="Nom"
+          />
         </div>
-        <div>
-          <label htmlFor="lastName" className="label">Nom</label>
-          <input id="lastName" name="lastName" required className="field" />
-        </div>
-      </div>
+      </fieldset>
 
+      {/* Forfait — toggle */}
       <fieldset>
         <legend className="label">Forfait</legend>
         <div className="grid gap-3 sm:grid-cols-2">
           {(["classique", "village"] as const).map((p) => (
             <label
               key={p}
-              className={`card cursor-pointer p-4 transition-colors ${
-                pack === p ? "border-primary bg-primary/5" : ""
+              className={`cursor-pointer rounded-md border px-4 py-3 text-center text-sm transition-colors ${
+                pack === p
+                  ? "border-primary bg-primary/10 text-fg"
+                  : "border-border bg-surface text-muted hover:border-fg/30"
               }`}
             >
               <input
@@ -116,20 +129,18 @@ export function SignupForm() {
                 onChange={() => setPack(p)}
                 className="sr-only"
               />
-              <p className="font-semibold capitalize">{p}</p>
-              <p className="mt-1 text-xs text-muted">
-                {p === "classique"
-                  ? "Accès à une ville de votre choix"
-                  : "Accès à toutes les villes"}
-              </p>
+              Forfait {p}
             </label>
           ))}
         </div>
       </fieldset>
 
+      {/* Ville */}
       {pack === "classique" && (
         <div>
-          <label htmlFor="cityId" className="label">Ville</label>
+          <label htmlFor="cityId" className="label">
+            Sélectionner la ville d'enseignement
+          </label>
           <select id="cityId" name="cityId" required className="field">
             <option value="">— Choisir une ville —</option>
             {cities.map((c) => (
@@ -146,30 +157,54 @@ export function SignupForm() {
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="email" className="label">Email</label>
-          <input id="email" name="email" type="email" autoComplete="email" required className="field" />
-        </div>
-        <div>
-          <label htmlFor="emailConfirm" className="label">Confirmer l'email</label>
-          <input id="emailConfirm" name="emailConfirm" type="email" required className="field" />
-        </div>
+      {/* Emails */}
+      <div>
+        <label htmlFor="email" className="label">Entrez votre adresse e-mail</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autoComplete="email"
+          required
+          className="field"
+        />
+      </div>
+      <div>
+        <label htmlFor="emailConfirm" className="label">Confirmer l'adresse mail</label>
+        <input
+          id="emailConfirm"
+          name="emailConfirm"
+          type="email"
+          required
+          className="field"
+        />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="password" className="label">Mot de passe</label>
-          <input id="password" name="password" type="password" autoComplete="new-password" required className="field" />
-        </div>
-        <div>
-          <label htmlFor="passwordConfirm" className="label">Confirmer</label>
-          <input id="passwordConfirm" name="passwordConfirm" type="password" required className="field" />
-        </div>
+      {/* Mots de passe */}
+      <div>
+        <label htmlFor="password" className="label">Entrez votre mot de passe</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="new-password"
+          required
+          className="field"
+        />
+      </div>
+      <div>
+        <label htmlFor="passwordConfirm" className="label">Confirmer votre mot de passe</label>
+        <input
+          id="passwordConfirm"
+          name="passwordConfirm"
+          type="password"
+          required
+          className="field"
+        />
       </div>
 
       {error && (
-        <p role="alert" className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+        <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-danger">
           {error}
         </p>
       )}
@@ -178,10 +213,28 @@ export function SignupForm() {
         {loading ? "Création du compte…" : "Créer mon compte"}
       </button>
 
-      <p className="text-center text-xs text-muted">
-        Aucun paiement n'est demandé à cette étape. Votre forfait sera activé selon les
-        règles de l'association.
-      </p>
+      {/* Section paiement — brief §22 : présente en preview, DÉSACTIVÉE en Phase 1 */}
+      <fieldset
+        disabled
+        aria-disabled="true"
+        className="mt-4 rounded-md border border-dashed border-border p-5 opacity-60"
+      >
+        <legend className="px-2 text-xs uppercase tracking-widest text-muted">
+          Méthode de paiement — activation prévue en Phase 2
+        </legend>
+        <p className="text-sm text-muted">
+          Le paiement en ligne n'est pas encore actif. Aucun montant n'est demandé
+          à l'inscription. Votre forfait sera activé selon les règles de l'association.
+        </p>
+        <button
+          type="button"
+          disabled
+          className="btn-primary mt-4 w-full !cursor-not-allowed"
+          title="Le paiement en ligne sera activé prochainement"
+        >
+          Payer — bientôt disponible
+        </button>
+      </fieldset>
     </form>
   );
 }

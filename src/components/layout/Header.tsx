@@ -6,12 +6,17 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
-const publicNav = [
-  { href: "/", label: "Accueil" },
+interface NavItem {
+  href: string;
+  label: string;
+}
+
+const publicNav: readonly NavItem[] = [
   { href: "/actualites", label: "Actualités" },
-  { href: "/professeurs", label: "Professeurs" },
+  { href: "/professeurs", label: "Professeur" },
   { href: "/calendrier", label: "Calendrier" },
-] as const;
+  { href: "/#faq", label: "Question" },
+];
 
 export function Header() {
   const pathname = usePathname();
@@ -26,32 +31,33 @@ export function Header() {
           aria-label="Danse 2 Vivre — Accueil"
           onClick={() => setOpen(false)}
         >
-          <span className="font-display text-3xl leading-none text-primary">
-            Danse 2 Vivre
+          <span className="font-display text-3xl leading-none tracking-wide text-fg">
+            D<span className="text-primary">2</span>V
           </span>
         </Link>
 
         <nav aria-label="Navigation principale" className="hidden md:block">
           <ul className="flex items-center gap-1">
             {publicNav.map((item) => {
+              const [pathOnly] = item.href.split("#");
               const active =
-                item.href === "/"
+                pathOnly === "/"
                   ? pathname === "/"
-                  : pathname.startsWith(item.href);
+                  : pathname.startsWith(pathOnly ?? "");
               return (
                 <li key={item.href}>
-                  <Link
+                  <a
                     href={item.href}
                     className={cn(
-                      "rounded-pill px-4 py-2 text-sm font-medium transition-colors",
+                      "rounded-md px-3 py-2 text-sm font-medium transition-colors",
                       active
-                        ? "bg-elevated text-primary"
-                        : "text-fg hover:bg-elevated"
+                        ? "text-primary"
+                        : "text-muted hover:text-fg"
                     )}
                     aria-current={active ? "page" : undefined}
                   >
                     {item.label}
-                  </Link>
+                  </a>
                 </li>
               );
             })}
@@ -60,11 +66,11 @@ export function Header() {
 
         <div className="hidden items-center gap-2 md:flex">
           <ThemeToggle />
-          <Link href="/connexion" className="btn-ghost !py-2">
-            Connexion
-          </Link>
           <Link href="/inscription" className="btn-primary !py-2">
-            Rejoindre
+            S'inscrire
+          </Link>
+          <Link href="/connexion" className="btn-outline !py-2">
+            Se connecter
           </Link>
         </div>
 
@@ -97,22 +103,22 @@ export function Header() {
             <ul className="flex flex-col gap-1">
               {publicNav.map((item) => (
                 <li key={item.href}>
-                  <Link
+                  <a
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="block rounded-xl px-4 py-3 text-base hover:bg-elevated"
+                    className="block rounded-md px-4 py-3 text-base hover:bg-elevated"
                   >
                     {item.label}
-                  </Link>
+                  </a>
                 </li>
               ))}
             </ul>
             <div className="mt-4 flex gap-2">
-              <Link href="/connexion" onClick={() => setOpen(false)} className="btn-outline flex-1">
-                Connexion
-              </Link>
               <Link href="/inscription" onClick={() => setOpen(false)} className="btn-primary flex-1">
-                Rejoindre
+                S'inscrire
+              </Link>
+              <Link href="/connexion" onClick={() => setOpen(false)} className="btn-outline flex-1">
+                Se connecter
               </Link>
             </div>
             <div className="mt-4 flex justify-end">
