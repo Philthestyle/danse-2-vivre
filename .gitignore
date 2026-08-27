@@ -50,3 +50,6 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Local Netlify folder
+.netlify
