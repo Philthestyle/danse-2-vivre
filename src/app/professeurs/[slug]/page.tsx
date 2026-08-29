@@ -2,9 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getTeachers, getTeacherBySlug } from "@/lib/teachers";
+import { getTeachers, getTeacherBySlug, getTeacherEmail } from "@/lib/teachers";
 import { formatDate } from "@/lib/utils";
-import { ContactTeacherButton } from "@/components/features/ContactTeacherButton";
 import { ContactSection } from "@/components/features/ContactSection";
 
 export async function generateStaticParams() {
@@ -34,6 +33,13 @@ export default async function TeacherProfilePage({
   const { slug } = await params;
   const t = await getTeacherBySlug(slug);
   if (!t) notFound();
+
+  const email = await getTeacherEmail(slug);
+  const mailtoHref = email
+    ? `mailto:${email}?subject=${encodeURIComponent(
+        `Contact via Danse 2 Vivre — ${t.firstName}`
+      )}`
+    : "mailto:contact@danse2vivre.fr";
 
   return (
     <>
@@ -80,7 +86,9 @@ export default async function TeacherProfilePage({
               <Link href="/calendrier" className="btn-outline">
                 Voir ses cours
               </Link>
-              <ContactTeacherButton teacherSlug={t.slug} />
+              <a href={mailtoHref} className="btn-primary">
+                Contacter
+              </a>
             </div>
           </div>
         </div>

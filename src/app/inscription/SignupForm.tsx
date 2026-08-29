@@ -18,7 +18,9 @@ interface City {
  * - Sélectionner la ville d'enseignement (dropdown)
  * - Email + confirmation
  * - Mot de passe + confirmation
- * - (section Paiement DÉSACTIVÉE — brief §22)
+ *
+ * Note : la mention paiement a été retirée (retour Allan 2026-08-28) — le
+ * paiement vivra dans le profil membre en phase 2.
  */
 export function SignupForm() {
   const router = useRouter();
@@ -156,28 +158,8 @@ export function SignupForm() {
         </p>
       )}
 
-      {/* Section paiement — présente (comme Figma Slide 3) mais DÉSACTIVÉE (brief §22) */}
-      <fieldset
-        disabled
-        aria-disabled="true"
-        className="rounded-xl border border-dashed border-border p-6 opacity-60"
-      >
-        <legend className="px-2 text-xs uppercase tracking-widest text-muted">
-          Méthode de paiement acceptée
-        </legend>
-        <div className="mt-2 flex items-center gap-3">
-          <PaymentBadge label="VISA" />
-          <PaymentBadge label="Mastercard" />
-          <PaymentBadge label="PayPal" />
-        </div>
-        <p className="mt-4 text-xs text-muted">
-          Le paiement en ligne sera activé prochainement. Aucun montant n'est
-          demandé à cette étape.
-        </p>
-      </fieldset>
-
       <button type="submit" disabled={loading} className="btn-primary w-full">
-        {loading ? "Création du compte…" : "Payer"}
+        {loading ? "Création du compte…" : "Créer mon compte"}
       </button>
     </form>
   );
@@ -213,10 +195,3 @@ function Field({
   );
 }
 
-function PaymentBadge({ label }: { label: string }) {
-  return (
-    <span className="rounded border border-border bg-surface px-3 py-1 text-xs font-semibold text-fg">
-      {label}
-    </span>
-  );
-}

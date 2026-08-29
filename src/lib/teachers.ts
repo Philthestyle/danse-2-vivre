@@ -65,6 +65,29 @@ export async function getTeacherBySlug(slug: string): Promise<PublicTeacher | nu
   return all.find((t) => t.slug === slug) ?? null;
 }
 
+/**
+ * Email d'un professeur — SERVER-ONLY (utilise service_role).
+ * Retourne null si le backend n'est pas configuré ou si le prof est introuvable.
+ * Utilisé par la fiche prof pour générer un lien mailto: (brief Allan §3).
+ */
+export async function getTeacherEmail(slug: string): Promise<string | null> {
+  try {
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    const admin = createAdminClient();
+    const { data: teacher } = await admin
+      .from("teachers")
+      .select("profile_id")
+      .eq("slug", slug)
+      .maybeSingle();
+    const profileId = teacher?.profile_id as string | undefined;
+    if (!profileId) return null;
+    const { data } = await admin.auth.admin.getUserById(profileId);
+    return data.user?.email ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function fallbackFromSeed(): PublicTeacher[] {
   return seedTeachers.map((t) => ({
     id: t.slug,
