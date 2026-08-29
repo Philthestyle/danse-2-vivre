@@ -44,6 +44,32 @@ rejouer les flows :
 
 ---
 
-## Pass 2 — à venir (Allan · CRUD create/edit/delete)
+## Pass 2 — smoke QA Claude (assist) · 2026-08-29 09:44 UTC
+
+**URL testée** : <https://develop--danse-2-vivre-263.netlify.app> (preview develop après merge PR #3).
+
+**Méthode** : WebFetch sur les pages clés en état anonyme (état loggé + gate role
+non testables sans auth).
+
+| # | Check | Résultat |
+|---|-------|----------|
+| 1 | `/inscription` — pas de section paiement, CTA "Créer mon compte" | ✅ PASS |
+| 2 | `/` — header anon = "S'inscrire" + "Se connecter" | ✅ PASS |
+| 3 | `/qa/` — outil charge + prompt pseudo tester visible | ✅ PASS |
+| 4 | `/api/qa/config` — renvoie `{ url, anonKey }` JSON | ✅ PASS |
+| 5 | `/professeurs/allan` — bouton Contacter = `mailto:` | ⚠ PARTIEL — fallback `contact@danse2vivre.fr`, email prof pas résolu |
+
+### Follow-up à créer
+
+- **[P2] Fallback mailto prof** — `getTeacherEmail()` retourne `null` sur la
+  preview develop. Causes possibles : teachers servis depuis le seed (pas de
+  `profile_id` valide), env `SUPABASE_SERVICE_ROLE_KEY` absente en preview
+  Netlify, ou email absent sur `auth.users`. À investiguer après deploy prod ;
+  si idem en prod, corriger le peuplement des teachers ou l'exposition d'un
+  champ `email` mirroré sur `profiles`.
+
+---
+
+## Pass 3 — à venir (Allan · CRUD create/edit/delete)
 
 En attente des retours Allan sur CRUD contenu (fin de soirée 2026-08-28 ou 2026-08-29).
