@@ -10,6 +10,18 @@ interface City {
   name: string;
 }
 
+/**
+ * Formulaire d'inscription pixel-perfect Figma Slide 3-4.
+ * Champs (dans l'ordre Figma) :
+ * - Nom et prénom de l'adhérent
+ * - Forfait (Classique / Village en toggle)
+ * - Sélectionner la ville d'enseignement (dropdown)
+ * - Email + confirmation
+ * - Mot de passe + confirmation
+ *
+ * Note : la mention paiement a été retirée (retour Allan 2026-08-28) — le
+ * paiement vivra dans le profil membre en phase 2.
+ */
 export function SignupForm() {
   const router = useRouter();
   const [cities, setCities] = useState<City[]>([]);
@@ -33,9 +45,14 @@ export function SignupForm() {
     e.preventDefault();
     setError(null);
     const form = new FormData(e.currentTarget);
+
+    const firstAndLast = String(form.get("fullName") ?? "").trim().split(/\s+/);
+    const firstName = firstAndLast[0] ?? "";
+    const lastName = firstAndLast.slice(1).join(" ");
+
     const input: SignupInput = {
-      firstName: String(form.get("firstName") ?? ""),
-      lastName: String(form.get("lastName") ?? ""),
+      firstName,
+      lastName,
       email: String(form.get("email") ?? ""),
       emailConfirm: String(form.get("emailConfirm") ?? ""),
       password: String(form.get("password") ?? ""),
@@ -52,9 +69,7 @@ export function SignupForm() {
 
     const supabase = createClient();
     if (!supabase) {
-      setError(
-        "Backend non configuré dans cette preview. L'inscription réelle est disponible en local ou en production."
-      );
+      setError("Backend non configuré dans cette preview.");
       return;
     }
     setLoading(true);
@@ -78,71 +93,44 @@ export function SignupForm() {
       return;
     }
     setSuccess(true);
-    setTimeout(() => router.push("/profil"), 1500);
+    setTimeout(() => router.push("/inscription/merci" as never), 800);
   }
 
   if (success) {
     return (
-      <div role="status" className="text-center">
-        <p className="font-display text-4xl text-primary">Bienvenue !</p>
-        <p className="mt-2 text-muted">
-          Un email de confirmation vous a été envoyé. Redirection en cours…
-        </p>
+      <div role="status" className="rounded-xl border border-border bg-surface p-8 text-center">
+        <p className="display-script text-fg">Bienvenue !</p>
+        <p className="mt-3 text-muted">Redirection…</p>
       </div>
     );
   }
 
   return (
     <form onSubmit={onSubmit} className="space-y-6" noValidate>
-      {/* Nom + prénom */}
-      <fieldset>
-        <legend className="label">Nom et prénom de l'adhérent</legend>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <input
-            name="firstName"
-            required
-            className="field"
-            placeholder="Prénom"
-            aria-label="Prénom"
-          />
-          <input
-            name="lastName"
-            required
-            className="field"
-            placeholder="Nom"
-            aria-label="Nom"
-          />
-        </div>
-      </fieldset>
+      <Field label="Nom et prénom de l'adhérent" name="fullName" required />
 
-      {/* Forfait — toggle */}
-      <fieldset>
-        <legend className="label">Forfait</legend>
+      {/* Forfait — 2 boutons côte à côte */}
+      <div>
+        <label className="label">Forfait</label>
         <div className="grid gap-3 sm:grid-cols-2">
           {(["classique", "village"] as const).map((p) => (
-            <label
+            <button
               key={p}
-              className={`cursor-pointer rounded-md border px-4 py-3 text-center text-sm transition-colors ${
+              type="button"
+              onClick={() => setPack(p)}
+              className={`rounded-md border px-4 py-3 text-sm font-semibold capitalize transition-colors ${
                 pack === p
-                  ? "border-primary bg-primary/10 text-fg"
-                  : "border-border bg-surface text-muted hover:border-fg/30"
+                  ? "border-primary text-fg shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]"
+                  : "border-border text-muted hover:text-fg hover:border-fg"
               }`}
             >
-              <input
-                type="radio"
-                name="pack"
-                value={p}
-                checked={pack === p}
-                onChange={() => setPack(p)}
-                className="sr-only"
-              />
               Forfait {p}
-            </label>
+            </button>
           ))}
         </div>
-      </fieldset>
+      </div>
 
-      {/* Ville */}
+      {/* Ville — seulement si Classique */}
       {pack === "classique" && (
         <div>
           <label htmlFor="cityId" className="label">
@@ -156,59 +144,13 @@ export function SignupForm() {
               </option>
             ))}
           </select>
-          {cities.length === 0 && (
-            <p className="mt-1 text-xs text-muted">
-              Chargement des villes… (nécessite une connexion Supabase configurée)
-            </p>
-          )}
         </div>
       )}
 
-      {/* Emails */}
-      <div>
-        <label htmlFor="email" className="label">Entrez votre adresse e-mail</label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          className="field"
-        />
-      </div>
-      <div>
-        <label htmlFor="emailConfirm" className="label">Confirmer l'adresse mail</label>
-        <input
-          id="emailConfirm"
-          name="emailConfirm"
-          type="email"
-          required
-          className="field"
-        />
-      </div>
-
-      {/* Mots de passe */}
-      <div>
-        <label htmlFor="password" className="label">Entrez votre mot de passe</label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          autoComplete="new-password"
-          required
-          className="field"
-        />
-      </div>
-      <div>
-        <label htmlFor="passwordConfirm" className="label">Confirmer votre mot de passe</label>
-        <input
-          id="passwordConfirm"
-          name="passwordConfirm"
-          type="password"
-          required
-          className="field"
-        />
-      </div>
+      <Field label="Entrez votre adresse e-mail" name="email" type="email" required />
+      <Field label="Confirmer l'adresse mail" name="emailConfirm" type="email" required />
+      <Field label="Entrez votre mot de passe" name="password" type="password" required autoComplete="new-password" />
+      <Field label="Confirmer votre mot de passe" name="passwordConfirm" type="password" required autoComplete="new-password" />
 
       {error && (
         <p role="alert" className="rounded-md border border-danger/40 bg-danger/10 px-4 py-3 text-sm text-danger">
@@ -219,29 +161,37 @@ export function SignupForm() {
       <button type="submit" disabled={loading} className="btn-primary w-full">
         {loading ? "Création du compte…" : "Créer mon compte"}
       </button>
-
-      {/* Section paiement — brief §22 : présente en preview, DÉSACTIVÉE en Phase 1 */}
-      <fieldset
-        disabled
-        aria-disabled="true"
-        className="mt-4 rounded-md border border-dashed border-border p-5 opacity-60"
-      >
-        <legend className="px-2 text-xs uppercase tracking-widest text-muted">
-          Méthode de paiement — activation prévue en Phase 2
-        </legend>
-        <p className="text-sm text-muted">
-          Le paiement en ligne n'est pas encore actif. Aucun montant n'est demandé
-          à l'inscription. Votre forfait sera activé selon les règles de l'association.
-        </p>
-        <button
-          type="button"
-          disabled
-          className="btn-primary mt-4 w-full !cursor-not-allowed"
-          title="Le paiement en ligne sera activé prochainement"
-        >
-          Payer — bientôt disponible
-        </button>
-      </fieldset>
     </form>
   );
 }
+
+function Field({
+  label,
+  name,
+  type = "text",
+  required,
+  autoComplete,
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  required?: boolean;
+  autoComplete?: string;
+}) {
+  return (
+    <div>
+      <label htmlFor={name} className="label">
+        {label}
+      </label>
+      <input
+        id={name}
+        name={name}
+        type={type}
+        required={required}
+        autoComplete={autoComplete}
+        className="field"
+      />
+    </div>
+  );
+}
+

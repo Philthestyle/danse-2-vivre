@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Great_Vibes } from "next/font/google";
+import { Inter, Great_Vibes, Blaka, Cabin, Bebas_Neue } from "next/font/google";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -11,18 +11,36 @@ const inter = Inter({
   display: "swap",
 });
 
-// Fallback documenté pour "Caramel and Vanilla" — à remplacer par next/font/local
-// dès que le fichier officiel + la licence sont fournis (cf. AUDIT §10, brief §7).
-const displayFont = Great_Vibes({
+const scriptFont = Great_Vibes({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-caramel-vanilla",
+  variable: "--font-script",
+  display: "swap",
+});
+
+const blaka = Blaka({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-blaka",
+  display: "swap",
+});
+
+const cabin = Cabin({
+  subsets: ["latin"],
+  variable: "--font-cabin",
+  display: "swap",
+});
+
+const bebas = Bebas_Neue({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-bebas",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Danse 2 Vivre — L'association qui fait vibrer les villages",
+    default: "Danse 2 Vivre — Ton Style. Ton Flow. Ton Énergie.",
     template: "%s · Danse 2 Vivre",
   },
   description:
@@ -40,10 +58,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fdf9f4" },
-    { media: "(prefers-color-scheme: dark)", color: "#121018" },
-  ],
+  themeColor: "#0f0f0f",
   width: "device-width",
   initialScale: 1,
 };
@@ -52,7 +67,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="fr" suppressHydrationWarning className={`${inter.variable} ${displayFont.variable}`}>
+    <html
+      lang="fr"
+      suppressHydrationWarning
+      className={`${inter.variable} ${scriptFont.variable} ${blaka.variable} ${cabin.variable} ${bebas.variable}`}
+    >
       <body>
         <ThemeProvider>
           <a

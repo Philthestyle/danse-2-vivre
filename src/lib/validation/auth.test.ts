@@ -32,7 +32,7 @@ describe("signupSchema", () => {
     const r = signupSchema.safeParse(v);
     expect(r.success).toBe(false);
     if (!r.success) {
-      expect(r.error.issues[0].path).toContain("cityId");
+      expect(r.error.issues[0]?.path).toContain("cityId");
     }
   });
 

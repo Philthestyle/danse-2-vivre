@@ -50,3 +50,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# Local Netlify folder
+.netlify
+/Danse-2-Vivre-Figma

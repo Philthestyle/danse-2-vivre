@@ -1,7 +1,6 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  // Dark-first : .light toggle la palette claire (opposite of usual .dark)
   darkMode: ["class", ".dark"],
   content: ["./src/**/*.{ts,tsx,mdx}"],
   theme: {
@@ -22,20 +21,23 @@ const config: Config = {
           fg: "rgb(var(--color-accent-fg) / <alpha-value>)",
         },
         stage: "rgb(var(--color-stage) / <alpha-value>)",
-        danger: "rgb(var(--color-danger) / <alpha-value>)",
         success: "rgb(var(--color-success) / <alpha-value>)",
+        danger: "rgb(var(--color-danger) / <alpha-value>)",
       },
       fontFamily: {
-        display: ["var(--font-caramel-vanilla)", "cursive"],
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        script: ["var(--font-script)", "cursive"],
+        display: ["var(--font-script)", "cursive"],
+        blaka: ["var(--font-blaka)", "serif"],
+        cabin: ["var(--font-cabin)", "sans-serif"],
+        bebas: ["var(--font-bebas)", "sans-serif"],
       },
       borderRadius: {
-        card: "1.25rem",
+        card: "12px",
         pill: "999px",
       },
-      boxShadow: {
-        stage: "0 25px 60px -30px rgb(0 0 0 / 0.5)",
-        card: "0 4px 20px -8px rgb(0 0 0 / 0.15)",
+      maxWidth: {
+        page: "1360px",
       },
       keyframes: {
         "fade-up": {

@@ -33,6 +33,7 @@ export default async function ProfilePage() {
     .limit(1);
 
   const membership = memberships?.[0];
+  const isMember = (profile?.role ?? "member") === "member";
 
   return (
     <div className="container-page py-16">
@@ -66,34 +67,36 @@ export default async function ProfilePage() {
           </dl>
         </section>
 
-        <section className="card p-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl">Mon adhésion</h2>
-            <Link href="/profil/adhesion" className="text-sm text-primary hover:underline">
-              Détails →
-            </Link>
-          </div>
-          {membership ? (
-            <dl className="mt-4 space-y-3 text-sm">
-              <div className="flex justify-between">
-                <dt className="text-muted">Forfait</dt>
-                <dd className="font-medium capitalize">{membership.pack}</dd>
-              </div>
-              <div className="flex justify-between">
-                <dt className="text-muted">Statut</dt>
-                <dd>
-                  <span className="rounded-pill bg-elevated px-3 py-1 text-xs capitalize">
-                    {membership.status}
-                  </span>
-                </dd>
-              </div>
-            </dl>
-          ) : (
-            <p className="mt-4 text-sm text-muted">
-              Aucune adhésion enregistrée pour le moment.
-            </p>
-          )}
-        </section>
+        {isMember && (
+          <section className="card p-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl">Mon adhésion</h2>
+              <Link href="/profil/adhesion" className="text-sm text-primary hover:underline">
+                Détails →
+              </Link>
+            </div>
+            {membership ? (
+              <dl className="mt-4 space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <dt className="text-muted">Forfait</dt>
+                  <dd className="font-medium capitalize">{membership.pack}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-muted">Statut</dt>
+                  <dd>
+                    <span className="rounded-pill bg-elevated px-3 py-1 text-xs capitalize">
+                      {membership.status}
+                    </span>
+                  </dd>
+                </div>
+              </dl>
+            ) : (
+              <p className="mt-4 text-sm text-muted">
+                Aucune adhésion enregistrée pour le moment.
+              </p>
+            )}
+          </section>
+        )}
 
         <section className="card p-6 md:col-span-2">
           <div className="flex flex-wrap items-center gap-3">

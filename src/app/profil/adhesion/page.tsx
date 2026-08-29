@@ -20,6 +20,13 @@ export default async function MembershipPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/connexion?next=/profil/adhesion");
 
+  const { data: viewerProfile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+  if ((viewerProfile?.role ?? "member") !== "member") redirect("/profil");
+
   const { data: memberships } = await supabase
     .from("memberships")
     .select("pack, status, starts_on, expires_on, city:cities(name)")

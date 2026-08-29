@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { seedFaq, seedGallery } from "@/lib/data/seed";
 import { FaqAccordion } from "@/components/features/FaqAccordion";
+import { ContactSection } from "@/components/features/ContactSection";
 import { withBasePath } from "@/lib/paths";
 import { getTeachers } from "@/lib/teachers";
 
@@ -10,18 +11,18 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* 1. Hero — "Ton Style. Ton Flow. Ton Énergie." (Figma Slide 16:9 #1) */}
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="container-page relative grid gap-10 py-16 md:grid-cols-2 md:items-center md:py-24">
-          <div className="relative z-10">
-            <h1 className="display-hero text-fg">
-              Ton Style. <br />
-              Ton Flow. <br />
-              <span className="text-primary">Ton Énergie.</span>
+      {/* 1. Hero — "Ton Style. Ton Flow. Ton Énergie." (Figma Slide 1) */}
+      <section className="border-b border-border">
+        <div className="container-page grid gap-16 py-16 md:grid-cols-[1fr_1fr] md:items-center md:py-24">
+          <div>
+            <h1 className="display-hero text-fg text-balance">
+              Ton Style.<br />
+              Ton Flow.<br />
+              Ton Énergie.
             </h1>
-            <p className="mt-8 max-w-md text-lg text-muted">
-              L'association Danse 2 Vivre rassemble une communauté autour de la scène,
-              du geste et du plaisir de danser dans nos villages.
+            <p className="mt-10 max-w-md text-base leading-relaxed text-muted">
+              L'association Danse 2 Vivre rassemble une communauté autour de la
+              scène, du geste et du plaisir de danser dans nos villages.
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Link href="/inscription" className="btn-primary">
@@ -33,46 +34,35 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-border shadow-stage md:aspect-square">
+          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl border border-border md:aspect-[3/4]">
             <Image
               src={withBasePath("/images/hero.png")}
-              alt="Spectacle Danse 2 Vivre — scène et communauté"
+              alt="Spectacle Danse 2 Vivre"
               fill
               priority
               className="object-cover"
-              sizes="(min-width: 768px) 50vw, 100vw"
+              sizes="(min-width: 768px) 45vw, 100vw"
             />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
           </div>
         </div>
       </section>
 
       {/* 2. Qui sommes-nous ? */}
       <section className="border-b border-border py-20 md:py-28">
-        <div className="container-page grid items-center gap-12 md:grid-cols-2">
+        <div className="container-page grid items-center gap-16 md:grid-cols-2">
           <div>
-            <p className="font-display text-4xl text-primary sm:text-5xl">
-              Qui sommes nous ?
+            <h2 className="display-script text-fg">Qui sommes nous ?</h2>
+            <p className="mt-8 text-base leading-relaxed text-muted">
+              Danse 2 Vivre rassemble des amateurs, des passionnés et des
+              professionnels autour d'une conviction simple : la danse relie.
+              Nous animons des cours dans plusieurs villages, montons un
+              spectacle chaque année et cultivons une communauté chaleureuse
+              toute la saison.
             </p>
-            <p className="mt-6 text-base leading-relaxed text-muted sm:text-lg">
-              Danse 2 Vivre rassemble des amateurs, des passionnés et des professionnels
-              autour d'une conviction simple : la danse relie. Nous animons des cours dans
-              plusieurs villages, montons un spectacle chaque année et cultivons une
-              communauté chaleureuse toute la saison.
-            </p>
-            <div className="mt-8 grid grid-cols-3 gap-6 border-t border-border pt-8">
-              <div>
-                <p className="font-display text-4xl text-primary">200+</p>
-                <p className="text-xs uppercase tracking-widest text-muted">élèves</p>
-              </div>
-              <div>
-                <p className="font-display text-4xl text-primary">{teachers.length}</p>
-                <p className="text-xs uppercase tracking-widest text-muted">professeurs</p>
-              </div>
-              <div>
-                <p className="font-display text-4xl text-primary">4</p>
-                <p className="text-xs uppercase tracking-widest text-muted">villages</p>
-              </div>
+            <div className="mt-10 grid grid-cols-3 gap-6 border-t border-border pt-8">
+              <Stat value="200+" label="élèves" />
+              <Stat value={String(teachers.length)} label="professeurs" />
+              <Stat value="4" label="villages" />
             </div>
           </div>
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-border">
@@ -81,24 +71,24 @@ export default async function HomePage() {
               alt="La communauté Danse 2 Vivre"
               fill
               className="object-cover"
-              sizes="(min-width: 768px) 50vw, 100vw"
+              sizes="(min-width: 768px) 45vw, 100vw"
             />
           </div>
         </div>
       </section>
 
-      {/* 3. Nos professeurs — data live Supabase */}
+      {/* 3. Nos professeurs — grille (Figma Slide 11) */}
       <section className="border-b border-border py-20 md:py-28">
         <div className="container-page">
-          <div className="mb-12 text-center">
-            <p className="font-display text-4xl text-primary sm:text-5xl">
-              Nos professeurs
-            </p>
-            <p className="mt-3 text-muted">Cinq personnalités, cinq disciplines.</p>
+          <div className="mb-12 flex items-end justify-between gap-4">
+            <h2 className="display-script text-fg">Nos professeurs</h2>
+            <Link href="/professeurs" className="text-sm text-muted hover:text-fg">
+              Voir tous →
+            </Link>
           </div>
           {teachers.length === 0 ? (
             <div className="card p-10 text-center text-muted">
-              Les profils des professeurs seront ajoutés depuis l'administration.
+              Les profils seront ajoutés depuis l'administration.
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
@@ -106,35 +96,29 @@ export default async function HomePage() {
                 <Link
                   key={t.slug}
                   href={`/professeurs/${t.slug}`}
-                  className="group overflow-hidden rounded-xl border border-border bg-surface transition-all hover:border-primary/60 hover:-translate-y-1"
+                  className="group overflow-hidden rounded-xl border border-border bg-surface transition-all hover:border-fg/40"
                 >
-                  <div className="relative aspect-[4/5] w-full bg-gradient-to-b from-elevated to-surface">
-                    {t.photoUrl ? (
+                  <div className="relative aspect-[3/4] w-full bg-elevated">
+                    {t.photoUrl && (
                       <Image
                         src={t.photoUrl}
                         alt={`${t.firstName} ${t.lastName}`.trim()}
                         fill
-                        className="object-cover"
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                         sizes="(min-width: 1280px) 20vw, (min-width: 640px) 33vw, 50vw"
                       />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="font-display text-8xl text-primary/70">
-                          {t.firstName.charAt(0)}
-                        </span>
-                      </div>
                     )}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                      <p className="font-display text-2xl text-white">{t.firstName}</p>
-                    </div>
                   </div>
                   <div className="p-4">
-                    <p className="text-sm text-primary">{t.speciality}</p>
-                    {t.startedAt && (
-                      <p className="mt-1 text-xs text-muted">
-                        Commence {new Date(t.startedAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "short", year: "numeric" })}
-                      </p>
-                    )}
+                    <p className="text-sm font-semibold text-fg">
+                      Professeur depuis 4 ans
+                    </p>
+                    <p className="mt-1 text-lg font-bold text-primary">
+                      {t.firstName}
+                    </p>
+                    <p className="mt-1 text-xs text-muted">
+                      {t.speciality}
+                    </p>
                   </div>
                 </Link>
               ))}
@@ -143,12 +127,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 4. Galerie photo */}
+      {/* 4. Galerie photo — mosaïque (Figma Slide 1) */}
       <section className="border-b border-border py-20 md:py-28">
         <div className="container-page">
-          <div className="mb-12">
-            <p className="font-display text-4xl text-primary sm:text-5xl">Galerie photo</p>
-          </div>
+          <h2 className="mb-12 display-script text-fg">Galerie photo</h2>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {seedGallery.map((item, i) => (
               <figure
@@ -170,39 +152,32 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 5. Questions fréquentes */}
+      {/* 5. Questions fréquentes (Figma Slide 12) */}
       <section id="faq" className="border-b border-border py-20 md:py-28">
-        <div className="container-page mx-auto max-w-3xl">
-          <div className="mb-10">
-            <p className="font-display text-4xl text-primary sm:text-5xl">
-              Questions fréquentes
-            </p>
+        <div className="container-page">
+          <div className="mb-10 flex items-center justify-between">
+            <h2 className="display-script text-fg">Questions fréquentes</h2>
+            <Link href="/#faq" className="text-fg" aria-label="Toutes les questions">
+              →
+            </Link>
           </div>
           <FaqAccordion items={seedFaq} />
         </div>
       </section>
 
       {/* 6. Nous contacter */}
-      <section className="py-20 md:py-24">
-        <div className="container-page mx-auto max-w-3xl text-center">
-          <p className="font-display text-4xl text-primary sm:text-5xl">
-            Nous contacter
-          </p>
-          <p className="mt-4 text-muted">
-            Pour toute question, merci de nous contacter par email :
-          </p>
-          <a
-            href="mailto:secretariat.dansedevivre@gmail.com"
-            className="mt-6 inline-flex items-center gap-3 rounded-md border border-border bg-surface px-5 py-3 text-fg hover:border-primary hover:text-primary"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="5" width="18" height="14" rx="2" />
-              <path d="M3 7l9 6 9-6" />
-            </svg>
-            secretariat.dansedevivre@gmail.com
-          </a>
-        </div>
-      </section>
+      <ContactSection />
     </>
+  );
+}
+
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <p className="font-blaka text-3xl text-primary sm:text-4xl">{value}</p>
+      <p className="mt-1 text-xs uppercase tracking-widest text-muted">
+        {label}
+      </p>
+    </div>
   );
 }
