@@ -46,11 +46,11 @@ export function HeaderClient({ isAuthed }: { isAuthed: boolean }) {
                   <Link
                     href={item.href}
                     className={cn(
-                      "inline-flex cursor-pointer items-center rounded-md border px-5 py-2 text-sm font-semibold transition-all",
-                      "hover:border-primary hover:text-fg hover:shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]",
+                      "inline-flex cursor-pointer items-center rounded-md px-5 py-2 text-sm font-semibold transition-all",
+                      "hover:text-fg hover:shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]",
                       active
-                        ? "border-primary text-fg shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]"
-                        : "border-transparent text-muted"
+                        ? "text-fg shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]"
+                        : "text-muted"
                     )}
                     aria-current={active ? "page" : undefined}
                   >
@@ -132,7 +132,7 @@ export function HeaderClient({ isAuthed }: { isAuthed: boolean }) {
                   <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="block cursor-pointer rounded-md border border-transparent px-5 py-3 text-base font-semibold transition-all hover:border-primary hover:text-fg hover:shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]"
+                    className="block cursor-pointer rounded-md px-5 py-3 text-base font-semibold transition-all hover:text-fg hover:shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]"
                   >
                     {item.label}
                   </Link>
