@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils";
 
 const nav = [
   { href: "/actualites", label: "Actualités" },
-  { href: "/professeurs", label: "Professeur" },
+  { href: "/professeurs", label: "Professeurs" },
   { href: "/calendrier", label: "Calendrier" },
-  { href: "/#faq", label: "Question" },
+  { href: "/#faq", label: "Questions" },
 ] as const;
 
 export function HeaderClient({ isAuthed }: { isAuthed: boolean }) {
@@ -43,16 +43,19 @@ export function HeaderClient({ isAuthed }: { isAuthed: boolean }) {
                   : pathname.startsWith(pathOnly ?? "/");
               return (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     className={cn(
-                      "text-sm font-semibold transition-colors",
-                      active ? "text-fg" : "text-muted hover:text-fg"
+                      "inline-flex cursor-pointer items-center rounded-md border px-5 py-2 text-sm font-semibold transition-all",
+                      "hover:border-primary hover:text-fg hover:shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]",
+                      active
+                        ? "border-primary text-fg shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]"
+                        : "border-transparent text-muted"
                     )}
                     aria-current={active ? "page" : undefined}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               );
             })}
@@ -126,13 +129,13 @@ export function HeaderClient({ isAuthed }: { isAuthed: boolean }) {
             <ul className="flex flex-col gap-1">
               {nav.map((item) => (
                 <li key={item.href}>
-                  <a
+                  <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
-                    className="block rounded-md px-4 py-3 text-base hover:bg-elevated"
+                    className="block cursor-pointer rounded-md border border-transparent px-5 py-3 text-base font-semibold transition-all hover:border-primary hover:text-fg hover:shadow-[0_0_0_1px_rgba(219,22,47,0.6),inset_0_0_16px_rgba(219,22,47,0.12)]"
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

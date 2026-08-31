@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Great_Vibes, Blaka, Cabin, Bebas_Neue } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -73,6 +74,12 @@ export default function RootLayout({
       className={`${inter.variable} ${scriptFont.variable} ${blaka.variable} ${cabin.variable} ${bebas.variable}`}
     >
       <body>
+        <NextTopLoader
+          color="#db162f"
+          height={3}
+          showSpinner={false}
+          shadow="0 0 10px #db162f, 0 0 5px #db162f"
+        />
         <ThemeProvider>
           <a
             href="#main"
