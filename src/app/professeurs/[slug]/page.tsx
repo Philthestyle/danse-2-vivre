@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { getTeachers, getTeacherBySlug, getTeacherEmail } from "@/lib/teachers";
 import { formatDate } from "@/lib/utils";
 import { ContactSection } from "@/components/features/ContactSection";
+import { ContactTeacherButton } from "@/components/features/ContactTeacherButton";
 
 export async function generateStaticParams() {
   const teachers = await getTeachers();
@@ -86,8 +87,9 @@ export default async function TeacherProfilePage({
               <Link href="/calendrier" className="btn-outline">
                 Voir ses cours
               </Link>
-              <a href={mailtoHref} className="btn-primary">
-                Contacter
+              <ContactTeacherButton teacherSlug={slug} />
+              <a href={mailtoHref} className="btn-ghost">
+                ou par email
               </a>
             </div>
           </div>
