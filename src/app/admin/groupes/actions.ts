@@ -22,14 +22,24 @@ export async function createGroup(formData: FormData) {
     .insert(parsed)
     .select("id")
     .single();
-  if (error) throw new Error(error.message);
+  if (error) {
+    console.error("[createGroup] course_groups insert failed", { parsed, error });
+    throw new Error(`Création groupe échouée: ${error.message} (code=${error.code ?? "?"})`);
+  }
 
-  // Crée la conversation de groupe associée
   const { error: convErr } = await supabase.from("conversations").insert({
     kind: "group",
     group_id: group.id,
   });
-  if (convErr) throw new Error(convErr.message);
+  if (convErr) {
+    console.error("[createGroup] conversation insert failed", {
+      group_id: group.id,
+      convErr,
+    });
+    throw new Error(
+      `Groupe créé mais conversation associée échouée: ${convErr.message} (code=${convErr.code ?? "?"})`,
+    );
+  }
 
   revalidatePath("/admin/groupes");
 }
