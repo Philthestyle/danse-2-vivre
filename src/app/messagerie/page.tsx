@@ -27,14 +27,19 @@ export default async function MessagingPage() {
 
   return (
     <div className="container-page py-16">
-      <header>
-        <p className="text-sm font-semibold uppercase tracking-widest text-primary">
-          Discussions
-        </p>
-        <h1 className="mt-2 text-5xl">Messagerie</h1>
-        <p className="mt-3 text-muted">
-          Les conversations de vos cours et vos échanges avec les professeurs.
-        </p>
+      <header className="flex items-start justify-between gap-6 flex-wrap">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-widest text-primary">
+            Discussions
+          </p>
+          <h1 className="mt-2 text-5xl">Messagerie</h1>
+          <p className="mt-3 text-muted">
+            Les conversations de vos cours et vos échanges avec les professeurs.
+          </p>
+        </div>
+        <Link href="/professeurs" className="btn-primary shrink-0">
+          Nouveau message
+        </Link>
       </header>
 
       <div className="mt-10">

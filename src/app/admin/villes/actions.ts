@@ -30,6 +30,12 @@ export async function toggleCity(id: string, next: boolean) {
   revalidatePath("/admin/villes");
 }
 
+export async function toggleCityForm(formData: FormData) {
+  const id = String(formData.get("id") ?? "");
+  const next = formData.get("next") === "true";
+  await toggleCity(id, next);
+}
+
 export async function deleteCity(formData: FormData) {
   const id = String(formData.get("id") ?? "");
   const { supabase } = await requireAdmin();

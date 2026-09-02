@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Great_Vibes, Blaka, Cabin, Bebas_Neue } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -72,7 +73,21 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${scriptFont.variable} ${blaka.variable} ${cabin.variable} ${bebas.variable}`}
     >
+      <head>
+        {/* FOUC prevention — apply theme class BEFORE React hydrates. Dark by default (Figma). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('d2v-theme');var t=s||'dark';var r=t==='system'?(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):t;document.documentElement.classList.add(r);document.documentElement.style.colorScheme=r;}catch(e){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';}})();`,
+          }}
+        />
+      </head>
       <body>
+        <NextTopLoader
+          color="#db162f"
+          height={3}
+          showSpinner={false}
+          shadow="0 0 10px #db162f, 0 0 5px #db162f"
+        />
         <ThemeProvider>
           <a
             href="#main"

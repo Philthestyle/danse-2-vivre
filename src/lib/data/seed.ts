@@ -118,14 +118,54 @@ export const seedNews: SeedNews[] = [
 
 export const seedFaq: SeedFaq[] = [
   {
-    question: "Comment rejoindre l'association ?",
+    question: "Le pass sport est-il accepté ?",
     answer:
-      "L'inscription se fait en ligne depuis la page « Rejoindre ». Aucun paiement n'est demandé pour créer votre compte.",
+      "Oui, le Pass'Sport est accepté pour les adhérents éligibles (jeunes 14-17 ans, étudiants boursiers, adultes en situation de handicap). Contactez-nous pour connaître les modalités précises.",
   },
   {
-    question: "Quelle est la différence entre les forfaits Classique et Village ?",
+    question: "Où êtes-vous situés ?",
     answer:
-      "Le forfait Classique donne accès à une ville de votre choix. Le forfait Village donne accès à toutes les villes où interviennent nos professeurs.",
+      "Nous intervenons dans plusieurs villages (Nangis, Bois-le-Roi, Montpellier, et d'autres). Consultez la page Calendrier pour voir les cours par ville et vérifier les horaires près de chez vous.",
+  },
+  {
+    question: "À partir de quel âge peut-on s'inscrire ?",
+    answer:
+      "Les cours sont ouverts dès 6 ans. Nous proposons des groupes adaptés aux enfants, aux ados et aux adultes.",
+  },
+  {
+    question: "Quels sont les tarifs ?",
+    answer:
+      "Deux forfaits sont proposés : Classique (une ville) et Village (toutes nos villes). Le montant précis vous est communiqué à l'inscription en fonction de votre âge et du forfait choisi.",
+  },
+  {
+    question: "Qu'est ce que le « Forfait Village » ?",
+    answer:
+      "Le Forfait Village vous donne accès à toutes les villes où nous intervenons, contrairement au Forfait Classique qui est limité à une seule ville.",
+  },
+  {
+    question: "Quels sont les moyens de paiement disponibles ?",
+    answer:
+      "Nous acceptons les paiements par carte bancaire, virement, chèque et espèces. Le Pass'Sport est également accepté pour les bénéficiaires.",
+  },
+  {
+    question: "Quel matériel faut-il prévoir ?",
+    answer:
+      "Une tenue confortable et des chaussures propres réservées à la salle. Une gourde d'eau est recommandée. Aucun autre matériel spécifique n'est requis.",
+  },
+  {
+    question: "Vos adhérents participent-ils à des événements ?",
+    answer:
+      "Oui, nos adhérents participent régulièrement à notre spectacle annuel, à des battles, à des stages et à divers événements dans la région tout au long de l'année.",
+  },
+  {
+    question: "Proposez-vous des stages ?",
+    answer:
+      "Oui, nous organisons des stages pendant les vacances scolaires et à l'occasion d'événements spéciaux. Consultez le Calendrier pour les prochaines dates.",
+  },
+  {
+    question: "Comment rejoindre l'association ?",
+    answer:
+      "L'inscription se fait en ligne depuis la page « S'inscrire ». Aucun paiement n'est demandé pour créer votre compte.",
   },
   {
     question: "Puis-je changer de ville ou de forfait en cours d'année ?",

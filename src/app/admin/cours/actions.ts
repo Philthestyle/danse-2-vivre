@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/actions/guards";
 
@@ -37,6 +38,38 @@ export async function createCourse(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/admin/cours");
   revalidatePath("/calendrier");
+}
+
+export async function updateCourse(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("missing_id");
+
+  const parsed = courseSchema.parse({
+    teacher_id: formData.get("teacher_id"),
+    city_id: (formData.get("city_id") as string) || null,
+    title: formData.get("title"),
+    description: (formData.get("description") as string) || undefined,
+    starts_at: formData.get("starts_at"),
+    ends_at: formData.get("ends_at"),
+  });
+
+  const { error } = await supabase
+    .from("courses")
+    .update({
+      teacher_id: parsed.teacher_id,
+      city_id: parsed.city_id || null,
+      title: parsed.title,
+      description: parsed.description ?? null,
+      starts_at: new Date(parsed.starts_at).toISOString(),
+      ends_at: new Date(parsed.ends_at).toISOString(),
+    })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/cours");
+  revalidatePath("/calendrier");
+  redirect("/admin/cours");
 }
 
 export async function deleteCourse(formData: FormData) {

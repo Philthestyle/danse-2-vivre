@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import Link from "next/link";
+import type { Metadata, Route } from "next";
 import { IS_STATIC_PREVIEW } from "@/lib/preview";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { DataTable } from "@/components/ui/DataTable";
@@ -121,10 +122,18 @@ export default async function AdminCoursesPage() {
           },
         ]}
         actions={(c) => (
-          <form action={deleteCourse}>
-            <input type="hidden" name="id" value={c.id} />
-            <ConfirmSubmit />
-          </form>
+          <>
+            <Link
+              href={`/admin/cours/${c.id}/edit` as Route}
+              className="btn-ghost text-primary"
+            >
+              Modifier
+            </Link>
+            <form action={deleteCourse}>
+              <input type="hidden" name="id" value={c.id} />
+              <ConfirmSubmit />
+            </form>
+          </>
         )}
       />
     </div>

@@ -33,6 +33,10 @@ const nextConfig: NextConfig = {
     // Le build de preview ne doit pas casser sur des lints — le vrai gate est le CI
     ignoreDuringBuilds: isStaticExport,
   },
+  typescript: {
+    // Idem : en mode STATIC_EXPORT, src/app/admin est déplacé → les <Link href="/admin"> restants cassent le typecheck. Le vrai gate est le CI dev/prod.
+    ignoreBuildErrors: isStaticExport,
+  },
 } as NextConfig;
 
 export default nextConfig;

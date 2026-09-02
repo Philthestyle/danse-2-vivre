@@ -1,0 +1,58 @@
+name: Deploy Production to Netlify
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: "netlify-prod"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund --legacy-peer-deps
+
+      - name: Install Netlify CLI
+        # Pinned : netlify-cli@latest publie une dep cassée @netlify/ai
+        run: npm install -g netlify-cli@26.1.0
+
+      - name: Deploy production to Netlify
+        id: netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SITE_URL: https://danse-2-vivre-263.netlify.app
+        run: |
+          OUTPUT=$(netlify deploy \
+            --prod \
+            --build \
+            --message "Prod deploy · $GITHUB_SHA" \
+            --site "$NETLIFY_SITE_ID" \
+            --auth "$NETLIFY_AUTH_TOKEN")
+
+          echo "$OUTPUT"
+          PROD_URL=$(echo "$OUTPUT" | grep -Eo 'https://danse-2-vivre-263\.netlify\.app' | head -1)
+          [ -z "$PROD_URL" ] && PROD_URL="https://danse-2-vivre-263.netlify.app"
+          echo "prod-url=$PROD_URL" >> $GITHUB_OUTPUT
+
+          echo "## 🚀 Production déployée" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: \`$GITHUB_SHA\`" >> $GITHUB_STEP_SUMMARY
+          echo "**URL**: [$PROD_URL]($PROD_URL)" >> $GITHUB_STEP_SUMMARY
