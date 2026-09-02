@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
+import Link from "next/link";
+import type { Metadata, Route } from "next";
 import { IS_STATIC_PREVIEW } from "@/lib/preview";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { DataTable } from "@/components/ui/DataTable";
 import { ConfirmSubmit } from "@/components/ui/ConfirmSubmit";
 import { Uploader } from "@/components/features/Uploader";
-import { createTeacher, deleteTeacher } from "./actions";
+import { createTeacher, deleteTeacher, toggleTeacher } from "./actions";
 
 export const metadata: Metadata = {
   title: "Professeurs · Admin",
@@ -16,6 +17,7 @@ interface TeacherRow {
   slug: string;
   speciality: string;
   started_at: string | null;
+  is_active: boolean;
   profile: { id: string; first_name: string; last_name: string } | { id: string; first_name: string; last_name: string }[] | null;
 }
 
@@ -33,7 +35,7 @@ export default async function AdminTeachersPage() {
   const [{ data: teachersData }, { data: members }] = await Promise.all([
     supabase
       .from("teachers")
-      .select("id, slug, speciality, started_at, profile:profiles(id, first_name, last_name)")
+      .select("id, slug, speciality, started_at, is_active, profile:profiles(id, first_name, last_name)")
       .order("slug"),
     supabase
       .from("profiles")
@@ -124,12 +126,43 @@ export default async function AdminTeachersPage() {
             render: (t) => (t.started_at ? new Date(t.started_at).getFullYear() : "—"),
             className: "w-24",
           },
+          {
+            key: "is_active",
+            header: "Statut",
+            className: "w-28",
+            render: (t) => (
+              <span
+                className={`rounded-pill px-3 py-1 text-xs ${
+                  t.is_active
+                    ? "bg-success/15 text-success"
+                    : "bg-elevated text-muted"
+                }`}
+              >
+                {t.is_active ? "Actif" : "Inactif"}
+              </span>
+            ),
+          },
         ]}
         actions={(t) => (
-          <form action={deleteTeacher}>
-            <input type="hidden" name="id" value={t.id} />
-            <ConfirmSubmit />
-          </form>
+          <>
+            <Link
+              href={`/admin/professeurs/${t.id}/edit` as Route}
+              className="btn-ghost text-primary"
+            >
+              Modifier
+            </Link>
+            <form action={toggleTeacher}>
+              <input type="hidden" name="id" value={t.id} />
+              <input type="hidden" name="next" value={t.is_active ? "false" : "true"} />
+              <button type="submit" className="btn-ghost">
+                {t.is_active ? "Désactiver" : "Activer"}
+              </button>
+            </form>
+            <form action={deleteTeacher}>
+              <input type="hidden" name="id" value={t.id} />
+              <ConfirmSubmit />
+            </form>
+          </>
         )}
       />
     </div>
