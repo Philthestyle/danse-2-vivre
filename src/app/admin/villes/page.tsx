@@ -3,7 +3,7 @@ import { IS_STATIC_PREVIEW } from "@/lib/preview";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { DataTable } from "@/components/ui/DataTable";
 import { ConfirmSubmit } from "@/components/ui/ConfirmSubmit";
-import { createCity, deleteCity } from "./actions";
+import { createCity, deleteCity, toggleCityForm } from "./actions";
 
 export const metadata: Metadata = {
   title: "Villes · Admin",
@@ -69,10 +69,19 @@ export default async function AdminCitiesPage() {
           },
         ]}
         actions={(c) => (
-          <form action={deleteCity}>
-            <input type="hidden" name="id" value={c.id} />
-            <ConfirmSubmit />
-          </form>
+          <>
+            <form action={toggleCityForm}>
+              <input type="hidden" name="id" value={c.id} />
+              <input type="hidden" name="next" value={c.is_active ? "false" : "true"} />
+              <button type="submit" className="btn-ghost">
+                {c.is_active ? "Désactiver" : "Activer"}
+              </button>
+            </form>
+            <form action={deleteCity}>
+              <input type="hidden" name="id" value={c.id} />
+              <ConfirmSubmit />
+            </form>
+          </>
         )}
       />
     </div>
