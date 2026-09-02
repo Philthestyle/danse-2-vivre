@@ -73,6 +73,14 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${scriptFont.variable} ${blaka.variable} ${cabin.variable} ${bebas.variable}`}
     >
+      <head>
+        {/* FOUC prevention — apply theme class BEFORE React hydrates. Dark by default (Figma). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('d2v-theme');var t=s||'dark';var r=t==='system'?(window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):t;document.documentElement.classList.add(r);document.documentElement.style.colorScheme=r;}catch(e){document.documentElement.classList.add('dark');document.documentElement.style.colorScheme='dark';}})();`,
+          }}
+        />
+      </head>
       <body>
         <NextTopLoader
           color="#db162f"
