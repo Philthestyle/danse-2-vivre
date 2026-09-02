@@ -93,7 +93,19 @@ export function SignupForm() {
       return;
     }
     setSuccess(true);
-    setTimeout(() => router.push("/inscription/merci" as never), 800);
+    const cityName = input.cityId
+      ? cities.find((c) => c.id === input.cityId)?.name ?? ""
+      : "";
+    const mercQuery = new URLSearchParams({
+      name: `${input.firstName} ${input.lastName}`.trim(),
+      pack: input.pack,
+      ...(cityName ? { city: cityName } : {}),
+      email: input.email,
+    }).toString();
+    setTimeout(
+      () => router.push(`/inscription/merci?${mercQuery}` as never),
+      800,
+    );
   }
 
   if (success) {

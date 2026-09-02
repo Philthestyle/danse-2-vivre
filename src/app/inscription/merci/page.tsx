@@ -8,9 +8,32 @@ export const metadata: Metadata = {
 
 /**
  * Écran de remerciement post-inscription — Figma Slide 5.
- * Bouton "Télécharger votre facture" en carte dashed (préparé pour Phase 2 Stripe).
+ * Bouton "Télécharger votre facture" activé si les params d'inscription
+ * (name, pack, city) sont passés en URL par SignupForm.
  */
-export default function InscriptionMerciPage() {
+export default async function InscriptionMerciPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    name?: string;
+    pack?: string;
+    city?: string;
+    email?: string;
+  }>;
+}) {
+  const params = await searchParams;
+  const canDownload =
+    !!params.name && (params.pack === "classique" || params.pack === "village");
+
+  const downloadUrl = canDownload
+    ? `/api/invoice/download?${new URLSearchParams({
+        name: params.name!,
+        pack: params.pack!,
+        ...(params.city ? { city: params.city } : {}),
+        ...(params.email ? { email: params.email } : {}),
+      }).toString()}`
+    : null;
+
   return (
     <>
       <div className="container-page py-16 md:py-24">
@@ -20,26 +43,36 @@ export default function InscriptionMerciPage() {
           </h1>
 
           <p className="mt-8 text-sm leading-relaxed text-muted">
-            Félicitations vous êtes désormais inscrit à l'association Danse 2
-            Vivre. Un e-mail de confirmation vous a été envoyé à l'adresse que
-            vous avez indiquée. Pensez à vérifier vos spams ou courriers
+            Félicitations vous êtes désormais inscrit à l&apos;association Danse 2
+            Vivre. Un e-mail de confirmation vous a été envoyé à l&apos;adresse
+            que vous avez indiquée. Pensez à vérifier vos spams ou courriers
             indésirables si vous ne le voyez pas dans votre boîte principale.
           </p>
 
           <p className="mt-8 font-semibold text-fg">À très vite parmi nous !</p>
 
-          <button
-            type="button"
-            disabled
-            className="mt-8 flex w-full items-center gap-3 rounded-xl border border-dashed border-border bg-transparent p-5 text-left opacity-60"
-            aria-disabled="true"
-            title="Le téléchargement sera disponible en Phase 2 (Stripe)"
-          >
-            <PdfIcon className="h-8 w-8 shrink-0" />
-            <span className="text-sm font-semibold text-fg">
-              Télécharger votre facture
-            </span>
-          </button>
+          {downloadUrl ? (
+            <a
+              href={downloadUrl}
+              download
+              className="mt-8 flex w-full items-center gap-3 rounded-xl border border-dashed border-primary/60 bg-primary/5 p-5 text-left transition-colors hover:bg-primary/10"
+            >
+              <PdfIcon className="h-8 w-8 shrink-0" />
+              <span className="text-sm font-semibold text-fg">
+                Télécharger votre facture
+              </span>
+            </a>
+          ) : (
+            <div
+              className="mt-8 flex w-full items-center gap-3 rounded-xl border border-dashed border-border bg-transparent p-5 text-left opacity-60"
+              title="Facture non disponible — rechargez la page depuis le formulaire d'inscription"
+            >
+              <PdfIcon className="h-8 w-8 shrink-0" />
+              <span className="text-sm font-semibold text-fg">
+                Télécharger votre facture
+              </span>
+            </div>
+          )}
         </div>
       </div>
       <ContactSection />
