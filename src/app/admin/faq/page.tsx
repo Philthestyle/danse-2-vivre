@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import Link from "next/link";
+import type { Metadata, Route } from "next";
 import { IS_STATIC_PREVIEW } from "@/lib/preview";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { DataTable } from "@/components/ui/DataTable";
@@ -90,10 +91,18 @@ export default async function AdminFaqPage() {
           },
         ]}
         actions={(r) => (
-          <form action={deleteFaq}>
-            <input type="hidden" name="id" value={r.id} />
-            <ConfirmSubmit />
-          </form>
+          <>
+            <Link
+              href={`/admin/faq/${r.id}/edit` as Route}
+              className="btn-ghost text-primary"
+            >
+              Modifier
+            </Link>
+            <form action={deleteFaq}>
+              <input type="hidden" name="id" value={r.id} />
+              <ConfirmSubmit />
+            </form>
+          </>
         )}
       />
     </div>
