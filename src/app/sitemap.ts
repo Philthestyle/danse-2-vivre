@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
-import { seedNews, seedTeachers } from "@/lib/data/seed";
+import { getPublishedNews } from "@/lib/news";
+import { seedTeachers } from "@/lib/data/seed";
 
 export const dynamic = "force-static";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const staticRoutes = ["", "/actualites", "/professeurs", "/calendrier"];
+  const news = await getPublishedNews();
 
   return [
     ...staticRoutes.map((path) => ({
@@ -14,7 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly" as const,
       priority: path === "" ? 1 : 0.8,
     })),
-    ...seedNews.map((n) => ({
+    ...news.map((n) => ({
       url: `${base}/actualites/${n.slug}`,
       lastModified: new Date(n.publishedAt),
       changeFrequency: "monthly" as const,

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import type { Route } from "next";
 import type { Metadata } from "next";
 import { IS_STATIC_PREVIEW } from "@/lib/preview";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -121,6 +123,12 @@ export default async function AdminNewsPage() {
         ]}
         actions={(n) => (
           <>
+            <Link
+              href={`/admin/actualites/${n.id}/edit` as Route}
+              className="btn-ghost text-primary"
+            >
+              Modifier
+            </Link>
             <form action={togglePublishForm}>
               <input type="hidden" name="id" value={n.id} />
               <input

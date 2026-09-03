@@ -2,13 +2,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { seedNews } from "@/lib/data/seed";
+import { getAllPublishedSlugs, getNewsBySlug } from "@/lib/news";
 import { formatDate } from "@/lib/utils";
-import { withBasePath } from "@/lib/paths";
 
-export function generateStaticParams() {
-  return seedNews.map((n) => ({ slug: n.slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllPublishedSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
+
+export const dynamicParams = true;
 
 export async function generateMetadata({
   params,
@@ -16,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const news = seedNews.find((n) => n.slug === slug);
+  const news = await getNewsBySlug(slug);
   if (!news) return {};
   return {
     title: news.title,
@@ -35,7 +37,7 @@ export default async function NewsDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const news = seedNews.find((n) => n.slug === slug);
+  const news = await getNewsBySlug(slug);
   if (!news) notFound();
 
   return (
@@ -49,14 +51,14 @@ export default async function NewsDetailPage({
           {formatDate(news.publishedAt)} · {news.author}
         </p>
         <h1 className="mt-3 text-5xl sm:text-6xl leading-[1.05]">{news.title}</h1>
-        <p className="mt-6 text-xl text-muted">{news.excerpt}</p>
+        {news.excerpt && <p className="mt-6 text-xl text-muted">{news.excerpt}</p>}
       </header>
 
       {news.imageUrl && (
         <figure className="mx-auto mt-10 max-w-4xl">
           <div className="relative aspect-[16/9] overflow-hidden rounded-card">
             <Image
-              src={withBasePath(news.imageUrl)}
+              src={news.imageUrl}
               alt={news.title}
               fill
               className="object-cover"
@@ -67,8 +69,8 @@ export default async function NewsDetailPage({
         </figure>
       )}
 
-      <div className="prose mx-auto mt-12 max-w-2xl text-lg leading-relaxed text-fg">
-        <p>{news.content}</p>
+      <div className="prose mx-auto mt-12 max-w-2xl text-lg leading-relaxed text-fg whitespace-pre-wrap">
+        {news.content}
       </div>
     </article>
   );
