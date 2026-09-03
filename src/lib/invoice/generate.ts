@@ -1,23 +1,14 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { PACK_AMOUNT_EUR, PACK_LABEL, type Pack } from "@/lib/pricing";
 
 export interface InvoiceInput {
   fullName: string;
-  pack: "classique" | "village";
+  pack: Pack;
   cityName?: string | null;
   email?: string | null;
   issuedAt?: Date;
   invoiceNumber?: string;
 }
-
-const PACK_LABEL: Record<InvoiceInput["pack"], string> = {
-  classique: "Forfait Classique — 1 cours/semaine dans la ville choisie",
-  village: "Forfait Village — 3 cours/semaine dans les villes de l'association",
-};
-
-const PACK_AMOUNT_EUR: Record<InvoiceInput["pack"], number> = {
-  classique: 250,
-  village: 300,
-};
 
 const ASSOCIATION = {
   name: "Danse 2 Vivre",
