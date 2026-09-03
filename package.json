@@ -20,8 +20,6 @@
     "db:reset": "supabase db reset"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.658.0",
-    "@aws-sdk/s3-presigned-post": "^3.658.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.45.4",
     "clsx": "^2.1.1",

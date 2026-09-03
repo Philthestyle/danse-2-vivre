@@ -4,19 +4,19 @@ import { useState } from "react";
 
 type Category = "news" | "gallery" | "teacher" | "avatar";
 
-interface PresignResponse {
-  url: string;
-  fields: Record<string, string>;
-  key: string;
+interface SignResponse {
+  uploadUrl: string;
+  publicUrl: string;
+  path: string;
 }
 
 /**
- * Composant d'upload S3 :
+ * Composant d'upload Supabase Storage :
  *   1) POST /api/s3/presign avec category + filename + contentType + size
- *   2) POST direct S3 avec les fields renvoyés
- *   3) Callback onUploaded avec la key S3 (à stocker en base côté serveur)
+ *   2) PUT direct vers Supabase Storage avec le signed URL
+ *   3) Callback onUploaded avec la publicUrl (stockée telle quelle en base)
  *
- * Les credentials AWS ne quittent jamais le serveur. Le presign expire en 5 min.
+ * Le service_role ne quitte jamais le serveur. Le signed URL expire.
  */
 export function Uploader({
   category,
@@ -24,14 +24,14 @@ export function Uploader({
   hiddenName,
 }: {
   category: Category;
-  onUploaded?: (key: string) => void;
-  /** Si fourni, écrit la key dans un input hidden pour submit dans un formulaire parent. */
+  onUploaded?: (url: string) => void;
+  /** Si fourni, écrit la publicUrl dans un input hidden pour submit dans un formulaire parent. */
   hiddenName?: string;
 }) {
   const [state, setState] = useState<
     | { status: "idle" }
-    | { status: "uploading"; progress: number }
-    | { status: "done"; key: string }
+    | { status: "uploading" }
+    | { status: "done"; url: string }
     | { status: "error"; message: string }
   >({ status: "idle" });
 
@@ -40,9 +40,9 @@ export function Uploader({
     if (!file) return;
 
     try {
-      setState({ status: "uploading", progress: 0 });
+      setState({ status: "uploading" });
 
-      const presign = await fetch("/api/s3/presign", {
+      const sign = await fetch("/api/s3/presign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -52,21 +52,21 @@ export function Uploader({
           contentLength: file.size,
         }),
       });
-      if (!presign.ok) {
-        const err = await presign.json().catch(() => ({}));
-        throw new Error(err.error ?? "presign_failed");
+      if (!sign.ok) {
+        const err = await sign.json().catch(() => ({}));
+        throw new Error(err.error ?? "sign_failed");
       }
-      const { url, fields, key } = (await presign.json()) as PresignResponse;
+      const { uploadUrl, publicUrl } = (await sign.json()) as SignResponse;
 
-      const form = new FormData();
-      for (const [k, v] of Object.entries(fields)) form.append(k, v);
-      form.append("file", file);
+      const up = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": file.type },
+        body: file,
+      });
+      if (!up.ok) throw new Error("upload_failed");
 
-      const up = await fetch(url, { method: "POST", body: form });
-      if (!up.ok) throw new Error("s3_upload_failed");
-
-      setState({ status: "done", key });
-      onUploaded?.(key);
+      setState({ status: "done", url: publicUrl });
+      onUploaded?.(publicUrl);
     } catch (err) {
       setState({
         status: "error",
@@ -91,9 +91,9 @@ export function Uploader({
       {state.status === "done" && (
         <>
           <p className="mt-2 text-sm text-success">
-            ✓ Fichier envoyé · <code className="font-mono text-xs">{state.key}</code>
+            ✓ Fichier envoyé
           </p>
-          {hiddenName && <input type="hidden" name={hiddenName} value={state.key} />}
+          {hiddenName && <input type="hidden" name={hiddenName} value={state.url} />}
         </>
       )}
       {state.status === "error" && (

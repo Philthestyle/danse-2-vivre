@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { presignUpload } from "@/lib/s3/presign";
+import { signUpload } from "@/lib/supabase/storage";
 
 const bodySchema = z.object({
   category: z.enum(["news", "gallery", "teacher", "avatar"]),
@@ -34,7 +34,6 @@ export async function POST(request: Request) {
 
   const { category, filename, contentType, contentLength } = parsed.data;
 
-  // Autorisation par catégorie (defense in depth).
   const allowed =
     profile.role === "admin"
       ? true
@@ -43,10 +42,7 @@ export async function POST(request: Request) {
 
   const maxBytes = Number(process.env.S3_MAX_UPLOAD_BYTES ?? 10 * 1024 * 1024);
   if (contentLength > maxBytes) {
-    return NextResponse.json(
-      { error: "file_too_large", max: maxBytes },
-      { status: 413 }
-    );
+    return NextResponse.json({ error: "file_too_large", max: maxBytes }, { status: 413 });
   }
 
   const allowedMime = (process.env.S3_ALLOWED_MIME ?? "image/jpeg,image/png,image/webp")
@@ -56,12 +52,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "mime_not_allowed" }, { status: 415 });
   }
 
-  const safeName = filename
-    .toLowerCase()
-    .replace(/[^a-z0-9.\-_]/g, "-")
-    .slice(0, 100);
-  const key = `${category}/${crypto.randomUUID()}-${safeName}`;
-
-  const presigned = await presignUpload({ key, contentType, maxBytes });
-  return NextResponse.json(presigned);
+  const signed = await signUpload({ category, filename, contentType });
+  return NextResponse.json(signed);
 }
