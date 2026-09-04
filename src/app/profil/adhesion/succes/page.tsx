@@ -22,6 +22,19 @@ export default function AdhesionSuccessPage() {
           <Link href="/profil/adhesion" className="btn-primary">
             Voir mon adhésion
           </Link>
+          <a
+            href="/api/invoice/paid"
+            download
+            className="rounded-xl border border-primary/60 bg-primary/5 px-5 py-3 text-sm font-semibold text-fg transition-colors hover:bg-primary/10"
+          >
+            Télécharger ma facture payée
+          </a>
+        </div>
+        <p className="mt-4 text-xs text-muted">
+          Si la facture n'est pas encore disponible, patientez quelques secondes
+          puis rafraîchissez — Stripe confirme la transaction en arrière-plan.
+        </p>
+        <div className="mt-8">
           <Link href="/profil" className="text-sm text-muted hover:text-primary">
             ← Retour à mon profil
           </Link>
