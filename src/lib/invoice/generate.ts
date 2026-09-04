@@ -1,23 +1,17 @@
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
+import { PACK_AMOUNT_EUR, PACK_LABEL, type Pack } from "@/lib/pricing";
 
 export interface InvoiceInput {
   fullName: string;
-  pack: "classique" | "village";
+  pack: Pack;
   cityName?: string | null;
   email?: string | null;
   issuedAt?: Date;
   invoiceNumber?: string;
+  paid?: boolean;
+  paidAt?: Date;
+  paymentIntent?: string | null;
 }
-
-const PACK_LABEL: Record<InvoiceInput["pack"], string> = {
-  classique: "Forfait Classique — 1 cours/semaine dans la ville choisie",
-  village: "Forfait Village — 3 cours/semaine dans les villes de l'association",
-};
-
-const PACK_AMOUNT_EUR: Record<InvoiceInput["pack"], number> = {
-  classique: 250,
-  village: 300,
-};
 
 const ASSOCIATION = {
   name: "Danse 2 Vivre",
@@ -27,14 +21,15 @@ const ASSOCIATION = {
 };
 
 /**
- * Génère une facture pro-forma d'adhésion au format PDF.
- * Statut « À régler » — le paiement se fait en Phase 2 (Stripe / virement).
+ * Génère une facture d'adhésion au format PDF.
+ * Deux variantes : pro-forma « À régler » (défaut) et « PAYÉE » (après Stripe).
  */
 export async function generateInvoicePdf(input: InvoiceInput): Promise<Uint8Array> {
   const issuedAt = input.issuedAt ?? new Date();
   const invoiceNumber =
     input.invoiceNumber ??
     `D2V-${issuedAt.getFullYear()}-${String(issuedAt.getMonth() + 1).padStart(2, "0")}${String(issuedAt.getDate()).padStart(2, "0")}-${Math.floor(Math.random() * 9000 + 1000)}`;
+  const paid = input.paid === true;
 
   const doc = await PDFDocument.create();
   const page = doc.addPage([595, 842]); // A4 portrait (points, 72 DPI)
@@ -44,6 +39,7 @@ export async function generateInvoicePdf(input: InvoiceInput): Promise<Uint8Arra
   const black = rgb(0.05, 0.05, 0.05);
   const muted = rgb(0.45, 0.45, 0.45);
   const primary = rgb(0.859, 0.086, 0.184); // #db162f
+  const success = rgb(0.086, 0.541, 0.212); // #168a36
   const border = rgb(0.85, 0.85, 0.87);
 
   const marginX = 50;
@@ -168,7 +164,7 @@ export async function generateInvoicePdf(input: InvoiceInput): Promise<Uint8Arra
 
   // Total
   y -= 24;
-  page.drawText("Total à régler", {
+  page.drawText(paid ? "Total payé" : "Total à régler", {
     x: 350,
     y,
     size: 12,
@@ -180,31 +176,60 @@ export async function generateInvoicePdf(input: InvoiceInput): Promise<Uint8Arra
     y,
     size: 14,
     font: helveticaBold,
-    color: primary,
+    color: paid ? success : primary,
   });
 
   // ================== STATUT ==================
   y -= 50;
+  const statusColor = paid ? success : primary;
+  const statusBg = paid ? rgb(0.92, 0.98, 0.94) : rgb(1, 0.95, 0.92);
   page.drawRectangle({
     x: marginX,
     y: y - 6,
     width: 495,
     height: 40,
-    color: rgb(1, 0.95, 0.92),
-    borderColor: primary,
+    color: statusBg,
+    borderColor: statusColor,
     borderWidth: 0.5,
   });
-  page.drawText("Statut : EN ATTENTE DE PAIEMENT", {
-    x: marginX + 12,
-    y: y + 16,
-    size: 10,
-    font: helveticaBold,
-    color: primary,
-  });
-  page.drawText(
-    "Paiement acceptés en 3 fois maximum : virement, chèque ou espèces.",
-    { x: marginX + 12, y: y + 2, size: 8, font: helvetica, color: muted },
-  );
+
+  if (paid) {
+    const paidAt = input.paidAt ?? issuedAt;
+    const paidDate = paidAt.toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+    page.drawText("Statut : PAYÉE", {
+      x: marginX + 12,
+      y: y + 16,
+      size: 10,
+      font: helveticaBold,
+      color: statusColor,
+    });
+    const paidLine = input.paymentIntent
+      ? `Réglée le ${paidDate} — Transaction Stripe ${input.paymentIntent}`
+      : `Réglée le ${paidDate}`;
+    page.drawText(paidLine, {
+      x: marginX + 12,
+      y: y + 2,
+      size: 8,
+      font: helvetica,
+      color: muted,
+    });
+  } else {
+    page.drawText("Statut : EN ATTENTE DE PAIEMENT", {
+      x: marginX + 12,
+      y: y + 16,
+      size: 10,
+      font: helveticaBold,
+      color: statusColor,
+    });
+    page.drawText(
+      "Paiement acceptés en 3 fois maximum : virement, chèque ou espèces.",
+      { x: marginX + 12, y: y + 2, size: 8, font: helvetica, color: muted },
+    );
+  }
 
   // ================== FOOTER ==================
   const footerY = 60;

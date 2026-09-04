@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { formatDate } from "@/lib/utils";
 import { IS_STATIC_PREVIEW } from "@/lib/preview";
 import { PreviewNotice } from "@/components/PreviewNotice";
+import { PACK_AMOUNT_EUR, type Pack } from "@/lib/pricing";
+import { PayButton } from "./PayButton";
 
 export const metadata: Metadata = {
   title: "Mon adhésion",
@@ -85,20 +87,22 @@ export default async function MembershipPage() {
 
           <section className="card p-8 md:col-span-2">
             <h2 className="text-2xl">Paiement</h2>
-            <p className="mt-3 text-muted">
-              Le paiement en ligne n'est pas encore actif. L'administration vous
-              accompagnera pour finaliser votre adhésion. Aucun montant n'est demandé
-              via cette interface pour le moment.
-            </p>
-            <button
-              type="button"
-              disabled
-              aria-disabled="true"
-              className="btn-primary mt-4 !cursor-not-allowed !opacity-50"
-              title="Le paiement en ligne sera activé prochainement"
-            >
-              Paiement en ligne — bientôt disponible
-            </button>
+            {current.status === "active" ? (
+              <p className="mt-3 text-muted">
+                Votre adhésion est active. Merci pour votre soutien.
+              </p>
+            ) : (
+              <>
+                <p className="mt-3 text-muted">
+                  Montant à régler :{" "}
+                  <span className="font-semibold text-fg">
+                    {PACK_AMOUNT_EUR[current.pack as Pack]},00 €
+                  </span>{" "}
+                  — paiement sécurisé Stripe.
+                </p>
+                <PayButton />
+              </>
+            )}
           </section>
         </div>
       ) : (
