@@ -28,12 +28,9 @@
     --color-danger: 219 22 47;         /* même rouge */
     --color-stage: 15 15 15;
 
-    /* Fonts (celles utilisées dans Figma) */
-    --font-sans: "Inter", system-ui, -apple-system, sans-serif;
-    --font-script: "Caramel and Vanilla", "Great Vibes", cursive;
-    --font-blaka: "Blaka", "UnifrakturCook", serif;
-    --font-cabin: "Cabin", "Inter", sans-serif;
-    --font-bebas: "Bebas Neue", "Inter", sans-serif;
+    /* Fonts — les CSS vars --font-* sont injectées par next/font (voir layout.tsx).
+       Ne PAS les redéclarer ici sinon on écrase les fallbacks générés par Next
+       et le vrai fichier .woff2 n'est jamais utilisé (Blaka tombait en serif). */
 
     color-scheme: dark;
   }
