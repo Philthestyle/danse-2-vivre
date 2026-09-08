@@ -47,15 +47,33 @@ jobs:
           BRANCH_SLUG="${BRANCH_SLUG:0:37}"
           echo "Branch alias: $BRANCH_SLUG"
 
-          OUTPUT=$(netlify deploy \
-            --build \
-            --alias "$BRANCH_SLUG" \
-            --message "Preview $GITHUB_REF_NAME · $GITHUB_SHA" \
-            --site "$NETLIFY_SITE_ID" \
-            --auth "$NETLIFY_AUTH_TOKEN")
+          # Retry x2 : les flakes Netlify (rate-limit, réseau, secret momentanément vide)
+          # étaient la source des mails "Run failed" alors qu'un simple re-run passait.
+          # Le tee vers /tmp/netlify-output.log permet de garder la sortie visible
+          # ET de la parser après (avant, le `OUTPUT=$(...)` masquait toute erreur en
+          # cas d'exit non-zéro à cause de `set -e`).
+          for attempt in 1 2; do
+            echo "::group::Netlify deploy — tentative $attempt/2"
+            if netlify deploy \
+              --build \
+              --alias "$BRANCH_SLUG" \
+              --message "Preview $GITHUB_REF_NAME · $GITHUB_SHA" \
+              --site "$NETLIFY_SITE_ID" \
+              --auth "$NETLIFY_AUTH_TOKEN" \
+              | tee /tmp/netlify-output.log; then
+              echo "::endgroup::"
+              break
+            fi
+            echo "::endgroup::"
+            if [ "$attempt" -eq 2 ]; then
+              echo "::error::Netlify deploy a échoué 2 fois de suite — voir logs ci-dessus"
+              exit 1
+            fi
+            echo "Tentative $attempt échouée, retry dans 30s..."
+            sleep 30
+          done
 
-          echo "$OUTPUT"
-          PREVIEW_URL=$(echo "$OUTPUT" | grep -Eo 'https://[a-z0-9-]+\.netlify\.app' | tail -1)
+          PREVIEW_URL=$(grep -Eo 'https://[a-z0-9-]+\.netlify\.app' /tmp/netlify-output.log | tail -1)
           echo "preview-url=$PREVIEW_URL" >> $GITHUB_OUTPUT
 
           echo "## 🚀 Preview déployé" >> $GITHUB_STEP_SUMMARY

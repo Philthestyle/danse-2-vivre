@@ -11,16 +11,29 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* 1. Hero — "Ton Style. Ton Flow. Ton Énergie." (Figma Slide 1) */}
-      <section className="border-b border-border">
-        <div className="container-page grid gap-16 py-16 md:grid-cols-[1fr_1fr] md:items-center md:py-24">
+      {/* 1. Hero — photo en fond plein cadre (retour Allan #2, retour designer) */}
+      <section className="relative isolate overflow-hidden border-b border-border">
+        <Image
+          src={withBasePath("/images/hero.png")}
+          alt="Spectacle Danse 2 Vivre"
+          fill
+          priority
+          className="-z-10 object-cover object-center"
+          sizes="100vw"
+        />
+        {/* Scrim gauche → droite pour lisibilité du texte, sans masquer la photo */}
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 -z-10 bg-gradient-to-r from-bg/85 via-bg/60 to-transparent"
+        />
+        <div className="container-page grid min-h-[70vh] gap-16 py-20 md:grid-cols-[1fr_1fr] md:items-center md:py-28">
           <div>
             <h1 className="display-hero text-fg text-balance">
               Ton Style.<br />
               Ton Flow.<br />
               Ton Énergie.
             </h1>
-            <p className="mt-10 max-w-md text-base leading-relaxed text-muted">
+            <p className="mt-10 max-w-md text-base leading-relaxed text-fg/80">
               L'association Danse 2 Vivre rassemble une communauté autour de la
               scène, du geste et du plaisir de danser dans nos villages.
             </p>
@@ -33,17 +46,8 @@ export default async function HomePage() {
               </Link>
             </div>
           </div>
-
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl border border-border md:aspect-[3/4]">
-            <Image
-              src={withBasePath("/images/hero.png")}
-              alt="Spectacle Danse 2 Vivre"
-              fill
-              priority
-              className="object-cover"
-              sizes="(min-width: 768px) 45vw, 100vw"
-            />
-          </div>
+          {/* Col droite laissée vide : la photo occupe désormais tout le fond */}
+          <div aria-hidden="true" />
         </div>
       </section>
 
